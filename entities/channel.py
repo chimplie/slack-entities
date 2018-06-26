@@ -9,18 +9,4 @@ class Channel(SlackResource):
         self.is_channel = is_channel
 
     def __repr__(self):
-        return f"<Channel {{id: '{self.id}', name: '{self.name}'}}>"
-
-    @classmethod
-    def get(cls, id=None, name=None):
-        if not (id or name):
-            raise ValueError("Channel parameters are not specified")
-
-        if id:
-            return super().get(id=id)
-        else:
-            channels = cls.filter(name=name)
-
-            if not channels:
-                raise SlackNotFoundError(f"Channel with name `{name}` does not exist")
-            return channels[0]
+        return f"<Channel #{self.name}>"
