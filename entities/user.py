@@ -68,6 +68,9 @@ class User(SlackResource):
         self.is_app_user = is_app_user
         self.real_name = real_name
 
+    def __repr__(self):
+        return f"<User @{self.name}>"
+
     @classmethod
     def from_item(cls, item):
         # Converting Profile to object

@@ -1,4 +1,3 @@
-from slack.client import client, SlackNotFoundError
 from slack.entities.resource import SlackResource
 
 
