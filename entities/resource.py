@@ -52,12 +52,12 @@ class SlackResource:
             item = cls._fetch(*args, **kwargs)
             return cls.from_item(item)
         else:
-            users = cls.filter(**kwargs)
-            if len(users) > 1:
+            resources = cls.filter(**kwargs)
+            if len(resources) > 1:
                 raise SlackApiError(f"Multiple {cls.resource_name_plural} with params {kwargs} exists.")
-            elif len(users) == 0:
+            elif len(resources) == 0:
                 raise SlackApiError(f"There is no {cls.resource_name_plural} with params {kwargs}.")
-        return users[0]
+        return resources[0]
 
     @classmethod
     def all(cls):
