@@ -49,9 +49,15 @@ class SlackResource:
         # Rename `id` to resource name for the Slack API
         if 'id' in kwargs:
             kwargs[cls._get_name()] = kwargs.pop('id')
-
-        item = cls._fetch(*args, **kwargs)
-        return cls.from_item(item)
+            item = cls._fetch(*args, **kwargs)
+            return cls.from_item(item)
+        else:
+            users = cls.filter(**kwargs)
+            if len(users) > 1:
+                raise SlackApiError(f"Multiple {cls.resource_name_plural} with params {kwargs} exists.")
+            elif len(users) == 0:
+                raise SlackApiError(f"There is no {cls.resource_name_plural} with params {kwargs}.")
+        return users[0]
 
     @classmethod
     def all(cls):
