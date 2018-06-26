@@ -25,6 +25,9 @@ class UserProfile(SlackResource):
         self.image_original = image_original
         self.status_text_canonical = status_text_canonical
 
+    def __repr__(self):
+        return f"<UserProfile of {self.real_name}>"
+
 
 class User(SlackResource):
     """

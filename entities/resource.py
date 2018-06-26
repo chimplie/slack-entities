@@ -11,6 +11,9 @@ class SlackResource:
     fetch_api_method: str = None
     fetch_all_api_method: str = None
 
+    def __repr__(self):
+        return f"<{self.resource_name} {self.id}>"
+
     @classmethod
     def _get_name(cls):
         return cls.resource_name or cls.__name__.lower()
