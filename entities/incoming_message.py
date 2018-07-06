@@ -2,7 +2,7 @@ from slack.entities.channel import Channel
 from slack.entities.user import User
 
 
-class Message:
+class IncomingMessage:
     """
     Describes message sent in Slack
     """

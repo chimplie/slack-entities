@@ -9,3 +9,12 @@ class Channel(SlackResource):
 
     def __repr__(self):
         return f"<Channel #{self.name}>"
+
+    @property
+    def is_direct(self):
+        return self.id.startswith("D")
+
+    @property
+    def is_public(self):
+        return self.id.startswith("C")
+
