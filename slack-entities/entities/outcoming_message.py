@@ -1,15 +1,16 @@
-from slack.client import client
-from slack.entities.channel import Channel
+from ..client import get_client
+from .channel import Channel
 
 
 class OutcomingMessage:
-    def __init__(self, channel: Channel, text: str, attachments: list):
+    def __init__(self, channel: Channel, attachments: list, text: str='', token: str=None):
         self.channel = channel
+        self.token = token
         self.text = text
         self.attachments = attachments
 
     def send(self):
-        client.api_call(
+        get_client(token=self.token).api_call(
             'chat.postMessage',
             channel=self.channel.id,
             text=self.text,

@@ -1,6 +1,6 @@
 import logging
 
-from slack.entities.incoming_message import IncomingMessage
+from .incoming_message import IncomingMessage
 
 
 logger = logging.getLogger("event_factory")
@@ -8,33 +8,32 @@ logger = logging.getLogger("event_factory")
 
 class Event:
     """
-    Represents slack event
+    Represents slack-entities-entities event
     """
-    def __init__(self, id, payload):
+    def __init__(self, id, event_item):
         self.id = id
-        self.payload = payload
-        self.subtype = payload.get("subtype")
+        self.event_item = event_item
+        self.subtype = event_item.get("subtype")
 
     @classmethod
-    def from_item(cls, id, payload):
-        return cls(id, payload)
+    def from_item(cls, id, event_item):
+        return cls(id, event_item)
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {{id: {self.id}}}>"
 
 
 class MessageEvent(Event):
-    def __init__(self, id, payload, message: IncomingMessage):
-        super().__init__(id, payload)
+    def __init__(self, id, event_item, message: IncomingMessage):
+        super().__init__(id, event_item)
         self.message = message
-        self.payload = payload
 
     @classmethod
-    def from_item(cls, id, item):
-        user_id = item.get("user") or item.get("bot_id")
-        text = item["text"]
-        channel_id = item["channel"]
-        attachments = item.get("attachments")
+    def from_item(cls, id, event_item):
+        user_id = event_item.get("user") or event_item.get("bot_id")
+        text = event_item["text"]
+        channel_id = event_item["channel"]
+        attachments = event_item.get("attachments", list())
 
         # Getting message object
         message = IncomingMessage(
@@ -44,7 +43,7 @@ class MessageEvent(Event):
             attachments=attachments
         )
 
-        return cls(id, payload=item, message=message)
+        return cls(id, event_item=event_item, message=message)
 
 
 class EventFactory:
@@ -59,12 +58,12 @@ class EventFactory:
         """
         return self.mapping_rules.get(event_type) or self.default_class
 
-    def from_item(self, id, item):
+    def from_item(self, id, event_item):
         """
         Returns event by its id and item
         """
-        event_class = self.get_class(item['type'])
-        return event_class.from_item(id, item)
+        event_class = self.get_class(event_item['type'])
+        return event_class.from_item(id, event_item)
 
     def from_webhook(self, webhook):
         """

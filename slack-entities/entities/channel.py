@@ -1,4 +1,4 @@
-from slack.entities.resource import SlackResource
+from .resource import SlackResource
 
 
 class Channel(SlackResource):
@@ -17,4 +17,3 @@ class Channel(SlackResource):
     @property
     def is_public(self):
         return self.id.startswith("C")
-

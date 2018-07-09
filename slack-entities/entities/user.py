@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from slack.entities.resource import SlackResource
+from .resource import SlackResource
 
 
 class UserProfile(SlackResource):
@@ -80,4 +80,3 @@ class User(SlackResource):
         item['profile'] = UserProfile.from_item(item['profile'])
 
         return super().from_item(item)
-

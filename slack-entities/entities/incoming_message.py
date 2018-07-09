@@ -1,5 +1,5 @@
-from slack.entities.channel import Channel
-from slack.entities.user import User
+from .channel import Channel
+from .user import User
 
 
 class IncomingMessage:
@@ -9,13 +9,7 @@ class IncomingMessage:
     _user: User
     _channel: Channel
 
-    def __init__(
-            self,
-            user_id: str,
-            channel_id: str,
-            text: str,
-            attachments: list=list()
-        ):
+    def __init__(self, user_id: str, channel_id: str, text: str, attachments: list):
         self._user_id = user_id
         self._channel_id = channel_id
         self.text = text

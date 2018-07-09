@@ -1,4 +1,4 @@
-from slack.client import client, SlackApiError
+from ..client import get_client, SlackApiError, SlackClient
 
 
 class SlackResource:
@@ -10,9 +10,13 @@ class SlackResource:
     resource_name_plural: str = None
     fetch_api_method: str = None
     fetch_all_api_method: str = None
+    client: SlackClient = None
 
     def __repr__(self):
         return f"<{self.resource_name} {self.id}>"
+
+    def set_client(self, token=None):
+        self.client = get_client(token=token)
 
     @classmethod
     def _get_name(cls):
@@ -30,6 +34,9 @@ class SlackResource:
         """
         Default fetch method
         """
+        # Channel - channels.info
+        # User - users.info
+        # Message - ?
         return cls.fetch_api_method or f"{cls._get_name_plural()}.info"
 
     @classmethod
@@ -38,21 +45,29 @@ class SlackResource:
         Fetch method for the all objects
         :return:
         """
+        # Channel - channels.list OR conversations.list
+        # User - users.list
+        # Message - im.list
         return cls.fetch_all_api_method or f"{cls._get_name_plural()}.list"
 
     @classmethod
     def from_item(cls, item):
+        """
+        Create SlackResource-like class object
+        :param item: dict
+        :return:
+        """
         return cls(**item)
 
     @classmethod
-    def get(cls, *args, **kwargs):
+    def get(cls, **kwargs):
         """
         Returns single object by specified parameters
         """
         # Rename `id` to resource name for the Slack API
         if 'id' in kwargs:
             kwargs[cls._get_name()] = kwargs.pop('id')
-            item = cls._fetch(*args, **kwargs)
+            item = cls._fetch(**kwargs)
             return cls.from_item(item)
         else:
             resources = cls.filter(**kwargs)
@@ -60,7 +75,7 @@ class SlackResource:
                 raise SlackApiError(f"Multiple {cls.resource_name_plural} with params {kwargs} exists.")
             elif len(resources) == 0:
                 raise SlackApiError(f"There is no {cls.resource_name_plural} with params {kwargs}.")
-        return resources[0]
+            return resources[0]
 
     @classmethod
     def all(cls):
@@ -101,7 +116,7 @@ class SlackResource:
     def _fetch(cls, method=None, return_resource=None, **kwargs):
         method = method or cls._get_fetch_method()
 
-        response = client.api_call(method, **kwargs)
+        response = cls.client.api_call(method, **kwargs)
 
         if not response["ok"]:
             raise SlackApiError(response['error'])
