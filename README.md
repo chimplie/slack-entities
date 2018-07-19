@@ -1,4 +1,4 @@
-Slack-entities
+Slack_entities
 =
 Chimplie's package for working with Slack API.
 
