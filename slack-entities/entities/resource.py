@@ -1,4 +1,11 @@
-from ..client import get_client, SlackApiError, SlackClient
+from client import get_client, SlackApiError, SlackClient, NoSlackTokenError
+
+
+def get_default_client():
+    try:
+        return get_client()
+    except NoSlackTokenError:
+        return None
 
 
 class SlackResource:
@@ -10,7 +17,7 @@ class SlackResource:
     resource_name_plural: str = None
     fetch_api_method: str = None
     fetch_all_api_method: str = None
-    client: SlackClient = None
+    client: SlackClient = get_default_client()
 
     def __repr__(self):
         return f"<{self.resource_name} {self.id}>"
@@ -114,6 +121,10 @@ class SlackResource:
 
     @classmethod
     def _fetch(cls, method=None, return_resource=None, **kwargs):
+        assert cls.client, f"""Slack {cls._get_name().capitalize()} API client is not specified.
+        Use .set_client() method or pass token using environment variable "SLACK_TOKEN"
+        """
+
         method = method or cls._get_fetch_method()
 
         response = cls.client.api_call(method, **kwargs)
