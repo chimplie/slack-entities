@@ -79,9 +79,9 @@ class SlackResource:
         else:
             resources = cls.filter(**kwargs)
             if len(resources) > 1:
-                raise SlackApiError(f"Multiple {cls.resource_name_plural} with params {kwargs} exists.")
+                raise SlackApiError(f"Multiple {cls._get_name_plural()} with params {kwargs} exists.")
             elif len(resources) == 0:
-                raise SlackApiError(f"There is no {cls.resource_name_plural} with params {kwargs}.")
+                raise SlackApiError(f"There is no {cls._get_name_plural()} with params {kwargs}.")
             return resources[0]
 
     @classmethod
