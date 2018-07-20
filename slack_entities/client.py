@@ -8,15 +8,6 @@ logger = logging.Logger("slack_client", level=15)
 logger.setLevel(15)
 
 
-# <------- DELETE IN THE FUTURE ------->
-TESTING_VARIABLE = "test variable"
-
-
-def test_print(smth_else):
-    print(f"\n{TESTING_VARIABLE} and {smth_else}.\n")
-# <------- DELETE IN THE FUTURE ------->
-
-
 class SlackApiError(Exception):
     pass
 
