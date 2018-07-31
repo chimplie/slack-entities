@@ -1,4 +1,4 @@
-from ..client import get_client
+from slack_entities.client.client import get_client
 from .channel import Channel
 
 

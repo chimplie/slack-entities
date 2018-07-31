@@ -1,4 +1,4 @@
-from client import get_client, SlackApiError, SlackClient, NoSlackTokenError
+from slack_entities.client.client import get_client, SlackApiError, SlackClient, NoSlackTokenError
 
 
 def get_default_client():
