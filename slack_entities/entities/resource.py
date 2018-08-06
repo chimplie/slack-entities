@@ -22,8 +22,10 @@ class SlackResource:
     def __repr__(self):
         return f"<{self.resource_name} {self.id}>"
 
-    def set_client(self, token=None):
-        self.client = get_client(token=token)
+    @classmethod
+    def using(cls, token):
+        cls.client = get_client(token=token)
+        return cls
 
     @classmethod
     def _get_name(cls):
