@@ -15,16 +15,14 @@ class IncomingMessage:
         self.text = text
         self.attachments = attachments
 
-    @property
-    def user(self) -> User:
+    def user(self, token=None) -> User:
         if not self._user:
-            self._user = User.get(id=self._user_id)
+            self._user = User.using(token).get(id=self._user_id)
 
         return self._user
 
-    @property
-    def channel(self) -> Channel:
+    def channel(self, token=None) -> Channel:
         if not self._channel:
-            self._channel = Channel.get(id=self._channel_id)
+            self._channel = Channel.using(token).get(id=self._channel_id)
 
         return self._channel
