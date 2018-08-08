@@ -6,8 +6,8 @@ class IncomingMessage:
     """
     Describes message sent in Slack
     """
-    _user: User
-    _channel: Channel
+    _user: User = None
+    _channel: Channel = None
 
     def __init__(self, user_id: str, channel_id: str, text: str, attachments: list):
         self._user_id = user_id
