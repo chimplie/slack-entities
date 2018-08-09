@@ -19,3 +19,14 @@ class Channel(SlackResource):
     @property
     def is_public(self):
         return not self.is_private
+
+    @classmethod
+    def get_by_user_id(cls, user_id, token=None):
+        """
+        Creates Channel object by Slack user id (1:1 messages with bot)
+        :param user_id: str
+        :param token: str
+        :return:
+        """
+        channel_id = cls.using(token)._fetch(method='im.open', return_resource='channel', user=user_id)['id']
+        return cls(channel_id)

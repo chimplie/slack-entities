@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="slack_entities",
-    version="0.0.10.1",
+    version="0.0.11",
     author="Oleh Zorenko",
     author_email="oleh@chimplie.com",
     description="Package for more convenient work with Slack API",
