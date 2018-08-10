@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/chimplie/slack_entities",
-    packages=find_packages(exclude=['slack_entities.test']),
+    packages=find_packages(exclude=['slack_entities.tests']),
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

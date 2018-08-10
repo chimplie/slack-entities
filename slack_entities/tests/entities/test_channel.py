@@ -1,8 +1,8 @@
 """
-We need new test framework
+We need new tests framework
 """
 from unittest import TestCase
-from entities.channel import Channel
+from slack_entities.entities.channel import Channel
 
 
 class ChannelTestCase(TestCase):

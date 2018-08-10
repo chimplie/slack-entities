@@ -1,8 +1,8 @@
 """
-We need new test framework
+We need new tests framework
 """
 from unittest import TestCase
-from entities.user import User
+from slack_entities.entities.user import User
 
 
 class UserTestCase(TestCase):
