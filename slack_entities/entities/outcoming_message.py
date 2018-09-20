@@ -7,7 +7,7 @@ class OutcomingMessage:
         self.channel = channel
         self.token = token
         self.text = text
-        self.attachments = attachments if attachments is None else []
+        self.attachments = attachments if attachments else []
 
     def send(self):
         return get_client(token=self.token).api_call(
