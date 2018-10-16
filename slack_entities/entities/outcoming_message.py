@@ -3,6 +3,9 @@ from .channel import Channel
 
 
 class OutcomingMessage:
+    """
+    Describes message sent to Slack
+    """
     def __init__(self, channel: Channel, attachments: list=None, text: str='', token: str=None):
         self.channel = channel
         self.token = token

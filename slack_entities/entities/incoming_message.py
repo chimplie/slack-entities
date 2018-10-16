@@ -4,7 +4,7 @@ from .user import User
 
 class IncomingMessage:
     """
-    Describes message sent in Slack
+    Describes message got from Slack
     """
     _user: User = None
     _channel: Channel = None
