@@ -28,41 +28,63 @@ class MessageEvent(Event):
         super().__init__(id, event_item)
         self.message = message
 
-    @classmethod
-    def from_item(cls, id, event_item):
-        user_id = event_item.get("user") or event_item.get("bot_id")
-        text = event_item["text"]
-        channel_id = event_item["channel"]
-        attachments = event_item.get("attachments", list())
-
-        # Getting message object
-        message = IncomingMessage(
-            user_id=user_id,
-            channel_id=channel_id,
-            text=text,
-            attachments=attachments
+    @staticmethod
+    def parse_message(event_item):
+        return IncomingMessage(
+            user_id=event_item.get("user") or event_item.get("bot_id"),
+            channel_id=event_item["channel"],
+            text=event_item["text"],
+            attachments=event_item.get("attachments", list())
         )
 
-        return cls(id, event_item=event_item, message=message)
+    @classmethod
+    def from_item(cls, id, event_item):
+        return cls(id, event_item=event_item, message=cls.parse_message(event_item))
+
+
+class EditedMessageEvent(MessageEvent):
+    def __init__(self, id, event_item, message: IncomingMessage, previous_message: IncomingMessage):
+        super().__init__(id, event_item, message)
+        self.previous_message = previous_message
+
+    @classmethod
+    def from_item(cls, id, event_item):
+        return cls(
+            id,
+            event_item=event_item,
+            message=IncomingMessage(
+                user_id=event_item['message'].get("user") or event_item.get("bot_id"),
+                channel_id=event_item["channel"],
+                text=event_item['message']["text"],
+                attachments=event_item['message'].get("attachments", list())
+            ),
+            previous_message=IncomingMessage(
+                user_id=event_item['previous_message'].get("user") or event_item.get("bot_id"),
+                channel_id=event_item["channel"],
+                text=event_item['previous_message']["text"],
+                attachments=event_item['previous_message'].get("attachments", list())
+            )
+        )
 
 
 class EventFactory:
-    mapping_rules = {
-        'message': MessageEvent
-    }
-    default_class = Event
-
-    def get_class(self, event_type) -> Event:
+    def get_class(self, event):
         """
         Returns class that should be used for the event
         """
-        return self.mapping_rules.get(event_type) or self.default_class
+        if event.get('subtype') == 'message_changed' and event.get('type') == 'message':
+            return EditedMessageEvent
+
+        if event.get('type') == 'message':
+            return MessageEvent
+
+        return Event
 
     def from_item(self, id, event_item):
         """
         Returns event by its id and item
         """
-        event_class = self.get_class(event_item['type'])
+        event_class = self.get_class(event_item)
         return event_class.from_item(id, event_item)
 
     def from_webhook(self, webhook):
@@ -78,7 +100,7 @@ class EventFactory:
 factory = EventFactory()
 
 
-def event_from_webhook(webhook) -> Event:
+def event_from_webhook(webhook):
     """
     Returns Event object from the webhook
     """
