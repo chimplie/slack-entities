@@ -40,6 +40,13 @@ class Team(SlackResource):
         raise PluralMethodError
 
     @classmethod
+    def get(cls, **kwargs):
+        """
+        Returns single object by specified parameters
+        """
+        return cls.from_item(cls._fetch(**kwargs))
+
+    @classmethod
     def filter(cls, **kwargs):
         """
         We can't use filter
