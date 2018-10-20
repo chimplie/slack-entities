@@ -41,7 +41,7 @@ class User(SlackResource):
             self,
             id: str,
             name: str,
-            deleted: bool,
+            deleted: bool = None,
             tz_offset: float = None,
             profile: UserProfile = None,
             is_admin: bool = None,
