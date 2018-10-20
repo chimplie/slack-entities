@@ -44,6 +44,7 @@ class SlackResource:
         Default fetch method
         """
         # Channel - channels.info
+        # Team - team.info
         # User - users.info
         # Message - ?
         return cls.fetch_api_method or f"{cls._get_name_plural()}.info"
@@ -55,6 +56,7 @@ class SlackResource:
         :return:
         """
         # Channel - channels.list OR conversations.list
+        # Team - DOESN'T EXIST !!!
         # User - users.list
         # Message - im.list
         return cls.fetch_all_api_method or f"{cls._get_name_plural()}.list"
