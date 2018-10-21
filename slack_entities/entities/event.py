@@ -1,5 +1,6 @@
 import logging
 
+from slack_entities.entities.user import User
 from .incoming_message import IncomingMessage
 
 
@@ -67,6 +68,19 @@ class EditedMessageEvent(MessageEvent):
         )
 
 
+class UserChangeEvent(Event):
+    def __init__(self, id, event_item, user: User):
+        super().__init__(id, event_item)
+        self.user = user
+
+    @classmethod
+    def from_item(cls, id, event_item):
+        return cls(
+            id, event_item,
+            user=User.from_item(event_item['user'])
+        )
+
+
 class EventFactory:
     def get_class(self, event):
         """
@@ -77,6 +91,9 @@ class EventFactory:
 
         if event.get('type') == 'message':
             return MessageEvent
+
+        if event.get('type') == 'user_change':
+            return UserChangeEvent
 
         return Event
 

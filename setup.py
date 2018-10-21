@@ -2,10 +2,12 @@ from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+with open("VERSION", "r") as fv:
+    version = fv.read()
 
 setup(
     name="slack_entities",
-    version="0.0.13",
+    version=version,
     author="Oleh Zorenko",
     author_email="oleh@chimplie.com",
     description="Package for more convenient work with Slack API",

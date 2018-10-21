@@ -3,7 +3,7 @@ We need new tests framework
 """
 from unittest import TestCase
 
-from slack_entities.entities.event import event_from_webhook, MessageEvent, EditedMessageEvent
+from slack_entities.entities.event import event_from_webhook, MessageEvent, EditedMessageEvent, UserChangeEvent
 
 
 class EditedMessageEventTestCase(TestCase):
@@ -72,3 +72,31 @@ class EditedMessageEventTestCase(TestCase):
         self.assertEqual(attachments, event.message.attachments)
         self.assertEqual(prev_text, event.previous_message.text)
         self.assertEqual(prev_attachments, event.previous_message.attachments)
+
+
+class UserChangeEventTestCase(TestCase):
+    def test_from_item(self):
+        user_id = 'U1234'
+        user_name = 'Test User'
+
+        webhook = {
+            'event_id': 'blabla',
+            'event': {
+                'type': 'user_change',
+                'user': {
+                    'id': user_id,
+                    'name': user_name,
+                    'profile': {
+                        'title': 'lol',
+                        'phone': '228',
+                        'real_name': 'Lol'
+                    }
+                }
+            }
+        }
+
+        event = event_from_webhook(webhook)
+
+        self.assertEqual(type(event), UserChangeEvent)
+        self.assertEqual(event.user.id, user_id)
+        self.assertEqual(event.user.name, user_name)
