@@ -16,12 +16,14 @@ class Action:
     def __init__(
             self,
             ts,
+            callback_id,
             team: Team,
             channel: Channel,
             user: User,
             original_message: IncomingMessage
     ):
         self.ts = ts
+        self.callback_id = callback_id
         self.team = team
         self.channel = channel
         self.user = user
@@ -45,12 +47,13 @@ class Action:
         user_dict = webhook['user']
 
         ts = webhook['action_ts']
+        callback_id = webhook['callback_id']
         team = Team(id=team_dict['id'], domain=team_dict['domain'])
         channel = Channel(id=channel_dict['id'], name=channel_dict['name'])
         user = User(id=user_dict['id'], name=user_dict['name'])
         original_message = cls._get_original_message(webhook)
 
-        return cls(ts, team, channel, user, original_message)
+        return cls(ts, callback_id, team, channel, user, original_message)
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {{ts: {self.ts}}}>'
@@ -63,6 +66,7 @@ class SelectAction(Action):
     def __init__(
             self,
             ts,
+            callback_id,
             name,
             value,
             team: Team,
@@ -70,7 +74,7 @@ class SelectAction(Action):
             user: User,
             original_message: IncomingMessage
     ):
-        super().__init__(ts, team, channel, user, original_message)
+        super().__init__(ts, callback_id, team, channel, user, original_message)
         self.name = name
         self.value = value
 
@@ -82,6 +86,7 @@ class SelectAction(Action):
         user_dict = webhook['user']
 
         ts = webhook['action_ts']
+        callback_id = webhook['callback_id']
         name = action['name']
         value = action['selected_options'][0]['value']
         team = Team(id=team_dict['id'], domain=team_dict['domain'])
@@ -89,7 +94,7 @@ class SelectAction(Action):
         user = User(id=user_dict['id'], name=user_dict['name'])
         original_message = cls._get_original_message(webhook)
 
-        return cls(ts, name, value, team, channel, user, original_message)
+        return cls(ts, callback_id, name, value, team, channel, user, original_message)
 
 
 class ButtonAction(Action):
@@ -99,6 +104,7 @@ class ButtonAction(Action):
     def __init__(
             self,
             ts,
+            callback_id,
             name,
             value,
             team: Team,
@@ -106,7 +112,7 @@ class ButtonAction(Action):
             user: User,
             original_message: IncomingMessage
     ):
-        super().__init__(ts, team, channel, user, original_message)
+        super().__init__(ts, callback_id, team, channel, user, original_message)
         self.name = name
         self.value = value
 
@@ -118,6 +124,7 @@ class ButtonAction(Action):
         user_dict = webhook['user']
 
         ts = webhook['action_ts']
+        callback_id = webhook['callback_id']
         name = action['name']
         value = action['value']
         team = Team(id=team_dict['id'], domain=team_dict['domain'])
@@ -125,7 +132,7 @@ class ButtonAction(Action):
         user = User(id=user_dict['id'], name=user_dict['name'])
         original_message = cls._get_original_message(webhook)
 
-        return cls(ts, name, value, team, channel, user, original_message)
+        return cls(ts, callback_id, name, value, team, channel, user, original_message)
 
 
 def get_action_class(action_type):
