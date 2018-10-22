@@ -7,7 +7,7 @@ from slack_entities.entities.action import action_from_webhook, Action, ButtonAc
 
 WEBHOOK_TEMPLATE = {
     "type": "interactive_message",
-    "callback_id": "callback",
+    "callback_id": "test_callback_id",
     "team": {
         "id": "TEAM_ID",
         "domain": "TEAM_DOMAIN"
@@ -79,6 +79,7 @@ class ActionTestCase(TestCase):
     def action_from_webhook_Action(self):
         action = action_from_webhook(WEBHOOK_ACTION)
 
+        self.assertTrue(action.callback_id == 'test_callback_id')
         self.assertTrue(type(action) == Action)
 
     def test_action_from_webhook(self):
