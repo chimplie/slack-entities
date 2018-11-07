@@ -2,8 +2,7 @@
 We need new tests framework
 """
 from unittest import TestCase
-from slack_entities.entities.action import action_from_webhook, Action, ButtonAction, SelectAction
-
+from slack_entities.entities.action import action_from_webhook, Action, ButtonAction, SelectAction, MessageAction
 
 WEBHOOK_TEMPLATE = {
     "type": "interactive_message",
@@ -63,6 +62,34 @@ WEBHOOK_BUTTON = dict(WEBHOOK_TEMPLATE, **{'actions': [{
 WEBHOOK_ACTION = dict(WEBHOOK_TEMPLATE, **{'actions': [{
     'type': 'something else'
 }]})
+WEBHOOK_MESSAGE_ACTION = {
+    'type': 'message_action',
+    'token': 'SLACK_TOKEN',
+    'action_ts': '1541510922.827322',
+    'team': {
+        'id': 'TEAM_ID',
+        'domain': 'TEAM_DOMAIN'
+    },
+    'user': {
+        'id': 'USER_ID',
+        'name': 'USER_NAME'
+    },
+    'channel': {
+        'id': 'CHANNEL_ID',
+        'name': 'CHANNEL_NAME'
+    },
+    'callback_id': 'pivotal',
+    'trigger_id': '472869436786.47444502659.884405da2a25311a4bcae9ddfaf23c07',
+    'message_ts': '1541507772.003300',
+    'message': {
+        'text': "some message",
+        'username': 'USERNAME',
+        'user': 'USER_ID',
+        'type': 'message',
+        'ts': '1541507772.003300'
+    },
+    'response_url': 'https://hooks.slack.com/app/ED54HY5GG/123456789012/jjdgfds7fdfg78d8fdgf'
+}
 
 
 class ActionTestCase(TestCase):
@@ -82,7 +109,15 @@ class ActionTestCase(TestCase):
         self.assertTrue(action.callback_id == 'test_callback_id')
         self.assertTrue(type(action) == Action)
 
+    def action_from_webhook_MessageAction(self):
+        action = action_from_webhook(WEBHOOK_MESSAGE_ACTION)
+
+        self.assertTrue(action.callback_id == 'pivotal')
+        self.assertTrue(action.trigger_id == '472869436786.47444502659.884405da2a25311a4bcae9ddfaf23c07')
+        self.assertTrue(type(action) == MessageAction)
+
     def test_action_from_webhook(self):
         self.action_from_webhook_ButtonAction()
         self.action_from_webhook_SelectAction()
         self.action_from_webhook_Action()
+        self.action_from_webhook_MessageAction()
