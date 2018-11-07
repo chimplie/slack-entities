@@ -135,9 +135,59 @@ class ButtonAction(Action):
         return cls(ts, callback_id, name, value, team, channel, user, original_message)
 
 
-def get_action_class(action_type):
+class MessageAction(Action):
     """
-    Returns class that should be used for the action
+    Represents custom slack user action
+    """
+    def __init__(
+            self,
+            ts,
+            callback_id,
+            trigger_id,
+            team: Team,
+            channel: Channel,
+            user: User,
+            original_message: IncomingMessage
+    ):
+        super().__init__(ts, callback_id, team, channel, user, original_message)
+        self.trigger_id = trigger_id
+
+    @classmethod
+    def from_item(cls, webhook):
+        team_dict = webhook['team']
+        channel_dict = webhook['channel']
+        user_dict = webhook['user']
+
+        ts = webhook['action_ts']
+        callback_id = webhook['callback_id']
+        trigger_id = webhook['trigger_id']
+        team = Team(id=team_dict['id'], domain=team_dict['domain'])
+        channel = Channel(id=channel_dict['id'], name=channel_dict['name'])
+        user = User(id=user_dict['id'], name=user_dict['name'])
+
+        original_message = cls._get_message(webhook)
+
+        return cls(ts, callback_id, trigger_id, team, channel, user, original_message)
+
+    @classmethod
+    def _get_original_message(cls, webhook):
+        raise NotImplementedError('You can\'t use this method in MessageAction class')
+
+    @classmethod
+    def _get_message(cls, webhook):
+        message = webhook['message']
+
+        return IncomingMessage(
+            user_id=message.get('user') or message.get('bot_id'),
+            channel_id=webhook['channel']['id'],
+            text=message['text'],
+            attachments=message.get('attachments', list())
+        )
+
+
+def get_class_for_interactive_message(action_type):
+    """
+    Returns one of classes which handle actions with type 'interactive_message'
     """
     if action_type == 'select':
         return SelectAction
@@ -149,8 +199,13 @@ def get_action_class(action_type):
 
 
 def get_action_from_webhook(webhook):
-    action = webhook['actions'][0]
-    return get_action_class(action.get('type')).from_item(webhook)
+    _type = webhook['type']
+
+    if _type == 'interactive_message':
+        return get_class_for_interactive_message(webhook['actions'][0].get('type')).from_item(webhook)
+
+    if _type == 'message_action':
+        return MessageAction.from_item(webhook)
 
 
 def action_from_webhook(webhook):
