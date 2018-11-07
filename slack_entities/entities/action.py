@@ -188,6 +188,41 @@ class MessageAction(Action):
         )
 
 
+class DialogSubmissionAction(Action):
+    """
+    Represents dialog submission action
+    """
+    def __init__(
+            self,
+            ts,
+            callback_id,
+            response_url,
+            submission: dict,
+            team: Team,
+            channel: Channel,
+            user: User
+    ):
+        super().__init__(ts, callback_id, team, channel, user, None)
+        self.response_url = response_url
+        self.submission = submission
+
+    @classmethod
+    def from_item(cls, webhook):
+        team_dict = webhook['team']
+        channel_dict = webhook['channel']
+        user_dict = webhook['user']
+
+        ts = webhook['action_ts']
+        callback_id = webhook['callback_id']
+        response_url = webhook['response_url']
+        submission = webhook['submission']
+        team = Team(id=team_dict['id'], domain=team_dict['domain'])
+        channel = Channel(id=channel_dict['id'], name=channel_dict['name'])
+        user = User(id=user_dict['id'], name=user_dict['name'])
+
+        return cls(ts, callback_id, response_url, submission, team, channel, user)
+
+
 def get_class_for_interactive_message(action_type):
     """
     Returns one of classes which handle actions with type 'interactive_message'
@@ -209,6 +244,9 @@ def get_action_from_webhook(webhook):
 
     if _type == 'message_action':
         return MessageAction.from_item(webhook)
+
+    if _type == 'dialog_submission':
+        return DialogSubmissionAction.from_item(webhook)
 
 
 def action_from_webhook(webhook):
