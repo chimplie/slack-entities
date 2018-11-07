@@ -9,6 +9,29 @@ from .incoming_message import IncomingMessage
 logger = logging.getLogger('action_factory')
 
 
+# class BaseAction:
+#     """
+#     Base class for slack's action
+#     """
+#     def __init__(
+#             self,
+#             ts,
+#             callback_id,
+#             team: Team,
+#             channel: Channel,
+#             user: User,
+#     ):
+#         self.ts = ts
+#         self.callback_id = callback_id
+#         self.team = team
+#         self.channel = channel
+#         self.user = user
+#
+#     @classmethod
+#     def from_item(cls, webhook):
+#         raise NotImplementedError('It\'s an abstract class for slack\'s action')
+
+
 class Action:
     """
     Represents Slack's action
