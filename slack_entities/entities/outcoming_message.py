@@ -19,3 +19,16 @@ class OutcomingMessage:
             text=self.text,
             attachments=self.attachments
         )
+
+    def update(self, ts):
+        """
+        Updates the message with the timestamp
+        :param ts: Timestamp of the message to update
+        """
+        return get_client(token=self.token).api_call(
+            'chat.update',
+            channel=self.channel.id,
+            ts=ts,
+            text=self.text,
+            attachments=self.attachments
+        )
