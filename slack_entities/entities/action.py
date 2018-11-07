@@ -144,6 +144,7 @@ class MessageAction(Action):
             ts,
             callback_id,
             trigger_id,
+            response_url,
             team: Team,
             channel: Channel,
             user: User,
@@ -151,6 +152,7 @@ class MessageAction(Action):
     ):
         super().__init__(ts, callback_id, team, channel, user, original_message)
         self.trigger_id = trigger_id
+        self.response_url = response_url
 
     @classmethod
     def from_item(cls, webhook):
@@ -161,13 +163,14 @@ class MessageAction(Action):
         ts = webhook['action_ts']
         callback_id = webhook['callback_id']
         trigger_id = webhook['trigger_id']
+        response_url = webhook['response_url']
         team = Team(id=team_dict['id'], domain=team_dict['domain'])
         channel = Channel(id=channel_dict['id'], name=channel_dict['name'])
         user = User(id=user_dict['id'], name=user_dict['name'])
 
         original_message = cls._get_message(webhook)
 
-        return cls(ts, callback_id, trigger_id, team, channel, user, original_message)
+        return cls(ts, callback_id, trigger_id, response_url, team, channel, user, original_message)
 
     @classmethod
     def _get_original_message(cls, webhook):
