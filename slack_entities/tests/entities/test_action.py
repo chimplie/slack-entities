@@ -88,7 +88,7 @@ WEBHOOK_MESSAGE_ACTION = {
         'type': 'message',
         'ts': '1541507772.003300'
     },
-    'response_url': 'https://hooks.slack.com/app/ED54HY5GG/123456789012/jjdgfds7fdfg78d8fdgf'
+    'response_url': 'test_url'
 }
 
 
@@ -114,6 +114,7 @@ class ActionTestCase(TestCase):
 
         self.assertTrue(action.callback_id == 'pivotal')
         self.assertTrue(action.trigger_id == '472869436786.47444502659.884405da2a25311a4bcae9ddfaf23c07')
+        self.assertTrue(action.response_url == 'test_url')
         self.assertTrue(type(action) == MessageAction)
 
     def test_action_from_webhook(self):
