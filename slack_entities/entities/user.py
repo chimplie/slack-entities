@@ -9,6 +9,7 @@ class UserProfile(SlackResource):
             title: str,
             phone: str,
             real_name: str,
+            display_name: str = None,
             email: str = None,
             first_name: str = None,
             last_name: str = None,
@@ -24,6 +25,7 @@ class UserProfile(SlackResource):
         self.last_name = last_name
         self.image_original = image_original
         self.status_text_canonical = status_text_canonical
+        self.display_name = display_name
 
     def __repr__(self):
         return f"<UserProfile of {self.real_name}>"
