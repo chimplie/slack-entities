@@ -4,13 +4,14 @@ We need new tests framework
 from unittest import TestCase
 
 from slack_entities.entities.event import event_from_webhook, MessageEvent, EditedMessageEvent, UserChangeEvent, \
-    TeamJoinEvent
+    TeamJoinEvent, DeletedMessageEvent
 
 
 class EditedMessageEventTestCase(TestCase):
     def test_event_from_webhook(self):
         self.event_from_webhook_MessageEvent()
         self.event_from_webhook_EditedMessageEvent()
+        self.event_from_webhook_DeletedMessageEvent()
 
     def event_from_webhook_MessageEvent(self):
         text = 'text in MessageEvent'
@@ -73,6 +74,38 @@ class EditedMessageEventTestCase(TestCase):
         self.assertEqual(attachments, event.message.attachments)
         self.assertEqual(prev_text, event.previous_message.text)
         self.assertEqual(prev_attachments, event.previous_message.attachments)
+
+    def event_from_webhook_DeletedMessageEvent(self):
+        deleted_text = 'text in DeletedMessage'
+        deleted_attachments = [
+            {
+                'lol': 'wut'
+            },
+            {
+                'wut': 'lol'
+            }
+        ]
+        webhook = {
+            'event_id': 'Q1W2E3R4T5',
+            'type': 'event_callback',
+            'event': {
+                'type': 'message',
+                'channel': 'channel_id',
+                'subtype': 'message_deleted',
+                'previous_message': {
+                    'type': 'message',
+                    'text': deleted_text,
+                    'files': [],
+                    'user': 'user_id',
+                    'attachments': deleted_attachments
+                }
+            }
+        }
+        event = event_from_webhook(webhook)
+
+        self.assertTrue(type(event) is DeletedMessageEvent)
+        self.assertEqual(deleted_text, event.message.text)
+        self.assertEqual(deleted_attachments, event.message.attachments)
 
 
 class UserChangeEventTestCase(TestCase):
