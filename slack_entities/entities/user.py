@@ -14,6 +14,7 @@ class UserProfile(SlackResource):
             first_name: str = None,
             last_name: str = None,
             image_original: str = None,
+            image_512: str = None,
             status_text_canonical: str = None,
             **kwargs
     ):
@@ -24,6 +25,7 @@ class UserProfile(SlackResource):
         self.first_name = first_name
         self.last_name = last_name
         self.image_original = image_original
+        self.image_512 = image_512
         self.status_text_canonical = status_text_canonical
         self.display_name = display_name
 
