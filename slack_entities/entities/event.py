@@ -68,6 +68,24 @@ class EditedMessageEvent(MessageEvent):
         )
 
 
+class DeletedMessageEvent(MessageEvent):
+    def __init__(self, id, event_item, message: IncomingMessage):
+        super().__init__(id, event_item, message)
+
+    @classmethod
+    def from_item(cls, id, event_item):
+        return cls(
+            id,
+            event_item=event_item,
+            message=IncomingMessage(
+                user_id=event_item['previous_message'].get("user") or event_item.get("bot_id"),
+                channel_id=event_item["channel"],
+                text=event_item['previous_message']["text"],
+                attachments=event_item['previous_message'].get("attachments", list())
+            )
+        )
+
+
 class UserChangeEvent(Event):
     def __init__(self, id, event_item, user: User):
         super().__init__(id, event_item)
@@ -101,6 +119,9 @@ class EventFactory:
         """
         if event.get('subtype') == 'message_changed' and event.get('type') == 'message':
             return EditedMessageEvent
+
+        if event.get('subtype') == 'message_deleted' and event.get('type') == 'message':
+            return DeletedMessageEvent
 
         if event.get('type') == 'message':
             return MessageEvent
