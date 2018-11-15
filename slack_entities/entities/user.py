@@ -6,9 +6,9 @@ from .resource import SlackResource
 class UserProfile(SlackResource):
     def __init__(
             self,
-            title: str,
-            phone: str,
             real_name: str,
+            title: str = None,
+            phone: str = None,
             display_name: str = None,
             email: str = None,
             first_name: str = None,
