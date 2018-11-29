@@ -61,7 +61,9 @@ WEBHOOK_SELECT = dict(WEBHOOK_TEMPLATE, **{
             "value": "5"
         }]
     }],
-    "original_message": return_original_message()
+    "original_message": return_original_message(),
+    'response_url': 'test_url',
+    'trigger_id': 'test_trigger_id'
 })
 WEBHOOK_BUTTON = dict(WEBHOOK_TEMPLATE, **{
     'actions': [{
@@ -69,13 +71,16 @@ WEBHOOK_BUTTON = dict(WEBHOOK_TEMPLATE, **{
         "type": "button",
         "value": "ok"
     }],
-    "original_message": return_original_message()
+    "original_message": return_original_message(),
+    'response_url': 'test_url',
+    'trigger_id': 'test_trigger_id'
 })
 WEBHOOK_ACTION = dict(WEBHOOK_TEMPLATE, **{
     'actions': [{
         'type': 'something else'
     }],
-    'original_message': return_original_message()
+    'original_message': return_original_message(),
+    'response_url': 'test_url'
 })
 WEBHOOK_MESSAGE_ACTION = dict(WEBHOOK_TEMPLATE, **{
     'type': 'message_action',
@@ -105,11 +110,15 @@ class ActionTestCase(TestCase):
     def action_from_webhook_ButtonAction(self):
         action = action_from_webhook(WEBHOOK_BUTTON)
 
+        self.assertTrue(action.trigger_id == 'test_trigger_id')
+        self.assertTrue(action.response_url == 'test_url')
         self.assertTrue(type(action) == ButtonAction)
 
     def action_from_webhook_SelectAction(self):
         action = action_from_webhook(WEBHOOK_SELECT)
 
+        self.assertTrue(action.trigger_id == 'test_trigger_id')
+        self.assertTrue(action.response_url == 'test_url')
         self.assertTrue(type(action) == SelectAction)
 
     def action_from_webhook_Action(self):
