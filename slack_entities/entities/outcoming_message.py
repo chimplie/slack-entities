@@ -1,4 +1,5 @@
 from slack_entities.client.client import get_client
+from slack_entities.entities.user import User
 from .channel import Channel
 
 
@@ -18,6 +19,15 @@ class OutcomingMessage:
             channel=self.channel.id,
             text=self.text,
             attachments=self.attachments
+        )
+
+    def send_ephemeral(self, user: User):
+        return get_client(token=self.token).api_call(
+            'chat.postEphemeral',
+            channel=self.channel.id,
+            text=self.text,
+            attachments=self.attachments,
+            user=user.id
         )
 
     def update(self, ts):
