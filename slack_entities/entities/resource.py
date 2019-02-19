@@ -55,7 +55,7 @@ class SlackResource:
         Fetch method for the all objects
         :return:
         """
-        # Channel - channels.list OR conversations.list
+        # Channel - conversations.list
         # Team - DOESN'T EXIST !!!
         # User - users.list
         # Message - im.list
@@ -136,4 +136,12 @@ class SlackResource:
         if not response["ok"]:
             raise SlackApiError(response['error'])
 
-        return response[return_resource or cls._get_name()]
+        next_cursor = response.get('response_metadata', {}).get('next_cursor')
+
+        data_to_return = response[return_resource or cls._get_name()]
+
+        if next_cursor:
+            kwargs['cursor'] = next_cursor
+            data_to_return += cls._fetch(method=method, return_resource=return_resource, **kwargs)
+
+        return data_to_return
