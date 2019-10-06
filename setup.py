@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="slack_entities",
-    version="0.0.28",
+    version="0.0.29",
     author="Oleh Zorenko",
     author_email="oleh@chimplie.com",
     description="Package for more convenient work with Slack API",
@@ -19,6 +19,6 @@ setup(
         "Operating System :: OS Independent",
     ),
     install_requires=[
-        'slackclient==1.2.1',
+        'slackclient==2.2.0',
     ]
 )

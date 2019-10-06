@@ -1,8 +1,7 @@
 import logging
 import os
 
-from slackclient import SlackClient
-
+from slack import WebClient
 
 logger = logging.Logger("slack_client", level=15)
 logger.setLevel(15)
@@ -20,10 +19,10 @@ class NoSlackTokenError(Exception):
     pass
 
 
-class SlackClientWithLogging(SlackClient):
-    def api_call(self, method, timeout=None, **kwargs):
-        logger.info(f"Fetching `{method}` with params `{kwargs}`")
-        response = super().api_call(method, timeout, **kwargs)
+class SlackClientWithLogging(WebClient):
+    def api_call(self, api_method, **kwargs):
+        logger.info(f"Fetching `{api_method}` with params `{kwargs}`")
+        response = super().api_call(api_method, data=kwargs)
         logger.info(f"Response:\n {response}")
         return response
 

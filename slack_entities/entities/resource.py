@@ -1,4 +1,4 @@
-from slack_entities.client.client import get_client, SlackApiError, SlackClient, NoSlackTokenError
+from slack_entities.client.client import get_client, SlackApiError, WebClient, NoSlackTokenError
 
 
 def get_default_client():
@@ -17,7 +17,7 @@ class SlackResource:
     resource_name_plural: str = None
     fetch_api_method: str = None
     fetch_all_api_method: str = None
-    client: SlackClient = get_default_client()
+    client: WebClient = get_default_client()
 
     def __repr__(self):
         return f"<{self.resource_name} {self.id}>"

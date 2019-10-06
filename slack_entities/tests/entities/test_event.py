@@ -4,7 +4,7 @@ We need new tests framework
 from unittest import TestCase
 
 from slack_entities.entities.event import event_from_webhook, MessageEvent, EditedMessageEvent, UserChangeEvent, \
-    TeamJoinEvent, DeletedMessageEvent
+    TeamJoinEvent, DeletedMessageEvent, event_from_rtm
 
 
 class MessageEventTestCase(TestCase):
@@ -23,6 +23,27 @@ class MessageEventTestCase(TestCase):
 
         self.assertTrue(type(event) is MessageEvent)
         self.assertEqual(text, event.message.text)
+
+    def test_from_rtm(self):
+        text = 'text in RTM event'
+        event_id = 'event_id'
+        rtm_event = {
+            'client_msg_id': '9455e012-8993-4de0-95e1-dc0ef00d9dc0',
+            'suppress_notification': False,
+            'text': text,
+            'user': 'user_id',
+            'team': 'teamid',
+            'user_team': 'teamid',
+            'source_team': 'teamid',
+            'channel': 'channelid',
+            'event_ts': event_id,
+            'ts': '1570352396.004200'}
+
+        event = event_from_rtm(rtm_event, 'message')
+
+        self.assertTrue(type(event) is MessageEvent)
+        self.assertEqual(text, event.message.text)
+        self.assertEqual(event_id, event.id)
 
 
 class EditedMessageEventTestCase(TestCase):
