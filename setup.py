@@ -19,6 +19,6 @@ setup(
         "Operating System :: OS Independent",
     ),
     install_requires=[
-        'slackclient==1.2.1',
+        'slackclient==2.2.0',
     ]
 )
