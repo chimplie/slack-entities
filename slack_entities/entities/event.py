@@ -150,6 +150,11 @@ class EventFactory:
 
         return self.from_item(event_id, event_item)
 
+    def from_rtm_event(self, id, event_type, data):
+        data['type'] = event_type
+
+        return self.from_item(id, data)
+
 
 factory = EventFactory()
 
@@ -160,5 +165,15 @@ def event_from_webhook(webhook):
     """
     logger.info(f"Parsing event from webhook with id: {webhook['event_id']}")
     event = factory.from_webhook(webhook)
+    logger.info(f"Parsed {event}")
+    return event
+
+
+def event_from_rtm(rtm_event: dict, event_type: str):
+    print(rtm_event)
+    id = rtm_event['event_ts']
+    logger.info(f"Parsing event from RTM event with id: {id}")
+
+    event = factory.from_rtm_event(id, event_type, rtm_event)
     logger.info(f"Parsed {event}")
     return event
