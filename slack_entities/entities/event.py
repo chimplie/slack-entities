@@ -170,7 +170,6 @@ def event_from_webhook(webhook):
 
 
 def event_from_rtm(rtm_event: dict, event_type: str):
-    print(rtm_event)
     id = rtm_event['event_ts']
     logger.info(f"Parsing event from RTM event with id: {id}")
 
