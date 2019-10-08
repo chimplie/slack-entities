@@ -22,7 +22,7 @@ class NoSlackTokenError(Exception):
 class SlackClientWithLogging(WebClient):
     def api_call(self, api_method, **kwargs):
         logger.info(f"Fetching `{api_method}` with params `{kwargs}`")
-        response = super().api_call(api_method, data=kwargs)
+        response = super().api_call(api_method, json=kwargs)
         logger.info(f"Response:\n {response}")
         return response
 
