@@ -3,7 +3,8 @@ python:
   - 3.6
 install:
   - pip install -r requirements.txt
-script: skip
+script:
+  - python -m unittest discover
 deploy:
   provider: pypi
   user: oleh.zorenko
