@@ -325,7 +325,7 @@ def get_class_for_interactive_message(action_type):
 def get_action_from_webhook(webhook):
     _type = webhook['type']
 
-    if _type = 'block_actions':
+    if _type == 'block_actions':
         return BlockAction.from_item(webhook)
 
     if _type == 'interactive_message':
