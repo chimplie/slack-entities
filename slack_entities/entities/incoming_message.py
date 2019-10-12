@@ -9,11 +9,12 @@ class IncomingMessage:
     _user: User = None
     _channel: Channel = None
 
-    def __init__(self, user_id: str, channel_id: str, text: str, attachments: list):
+    def __init__(self, user_id: str, channel_id: str, text: str, attachments: list, blocks: list=None):
         self._user_id = user_id
         self._channel_id = channel_id
         self.text = text
         self.attachments = attachments
+        self.blocks = blocks
 
     def user(self, token=None) -> User:
         if not self._user:
