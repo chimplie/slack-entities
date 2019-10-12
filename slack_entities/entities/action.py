@@ -114,8 +114,8 @@ class BlockAction(BaseAction):
             user_id=original_message.get('user') or original_message.get('bot_id'),
             channel_id=webhook['channel']['id'],
             text=original_message['text'],
-            attachments=original_message.get('attachments', [])
-            blocks=original_message.get('blocks', [])
+            attachments=original_message.get('attachments', []),
+            blocks=original_message.get('blocks', []),
         )
 
     @classmethod
