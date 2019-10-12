@@ -9,30 +9,39 @@ from .incoming_message import IncomingMessage
 logger = logging.getLogger('action_factory')
 
 
-# class BaseAction:
-#     """
-#     Base class for slack's action
-#     """
-#     def __init__(
-#             self,
-#             ts,
-#             callback_id,
-#             team: Team,
-#             channel: Channel,
-#             user: User,
-#     ):
-#         self.ts = ts
-#         self.callback_id = callback_id
-#         self.team = team
-#         self.channel = channel
-#         self.user = user
-#
-#     @classmethod
-#     def from_item(cls, webhook):
-#         raise NotImplementedError('It\'s an abstract class for slack\'s action')
+class BaseAction:
+    """
+    Base class for slack's action
+    """
+    def __init__(
+            self,
+            ts,
+            team: Team,
+            channel: Channel,
+            user: User,
+            original_message: IncomingMessage,
+            response_url=None
+    ):
+        self.ts = ts
+        self.team = team
+        self.channel = channel
+        self.user = user
+        self.original_message = original_message
+        self.response_url = response_url
+
+    @classmethod
+    def _get_original_message(cls, webhook):
+        raise NotImplementedError('It\'s an abstract class for slack\'s action')
+
+    @classmethod
+    def from_item(cls, webhook):
+        raise NotImplementedError('It\'s an abstract class for slack\'s action')
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {{ts: {self.ts}}}>'
 
 
-class Action:
+class Action(BaseAction):
     """
     Represents Slack's action
     """
@@ -46,13 +55,8 @@ class Action:
             original_message: IncomingMessage,
             response_url=None
     ):
-        self.ts = ts
+        super().__init__(ts, team, channel, user, original_message, response_url)
         self.callback_id = callback_id
-        self.team = team
-        self.channel = channel
-        self.user = user
-        self.original_message = original_message
-        self.response_url = response_url
 
     @classmethod
     def _get_original_message(cls, webhook):
@@ -81,8 +85,57 @@ class Action:
             'response_url': webhook['response_url'],
         })
 
-    def __repr__(self):
-        return f'<{self.__class__.__name__} {{ts: {self.ts}}}>'
+
+class BlockAction(BaseAction):
+    """ Represents actions retrieved from blocks. """
+    def __init__(
+        self,
+        ts,
+        team: Team,
+        user: User,
+        channel: Channel,
+        original_message: IncomingMessage,
+        response_url: str,
+        block_id: str,
+        action_id: str,
+        value: str
+    ):
+        super().__init__(ts=ts, team=team, user=user, channel=channel,
+                         original_message=original_message, response_url=response_url)
+        self.block_id = block_id
+        self.action_id = action_id
+        self.value = value
+
+    @classmethod
+    def _get_original_message(cls, webhook):
+        original_message = webhook['message']
+
+        return IncomingMessage(
+            user_id=original_message.get('user') or original_message.get('bot_id'),
+            channel_id=webhook['channel']['id'],
+            text=original_message['text'],
+            attachments=original_message.get('attachments', [])
+            blocks=original_message.get('blocks', [])
+        )
+
+    @classmethod
+    def from_item(cls, webhook):
+        team_dict = webhook['team']
+        channel_dict = webhook['channel']
+        user_dict = webhook['user']
+        action = webhook['actions'][0]
+
+        return cls(**{
+            'ts': action['action_ts'],
+            'team': Team(id=team_dict['id'], domain=team_dict['domain']),
+            'channel': Channel(id=channel_dict['id'], name=channel_dict['name']),
+            'user': User(id=user_dict['id'], name=user_dict['name']),
+            'original_message': cls._get_original_message(webhook),
+            'response_url': webhook['response_url'],
+            'block_id': action['block_id'],
+            'action_id': action['action_id'],
+            'value': action['value'],
+        })
 
 
 class SelectAction(Action):
@@ -271,6 +324,9 @@ def get_class_for_interactive_message(action_type):
 
 def get_action_from_webhook(webhook):
     _type = webhook['type']
+
+    if _type = 'block_actions':
+        return BlockAction.from_item(webhook)
 
     if _type == 'interactive_message':
         return get_class_for_interactive_message(webhook['actions'][0].get('type')).from_item(webhook)
