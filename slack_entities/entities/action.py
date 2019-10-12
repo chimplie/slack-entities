@@ -342,7 +342,7 @@ def action_from_webhook(webhook):
     """
     Returns Action object from the webhook
     """
-    logger.info(f"Parsing action from webhook with timestamp: {webhook['action_ts']}")
+    logger.info(f"Parsing action from webhook.")
     action = get_action_from_webhook(webhook)
     logger.info(f'Parsed {action}')
     return action
