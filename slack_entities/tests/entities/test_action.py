@@ -2,8 +2,13 @@
 We need new tests framework
 """
 from unittest import TestCase
-from slack_entities.entities.action import action_from_webhook, Action, ButtonAction, SelectAction, MessageAction, \
-    DialogSubmissionAction
+from slack.web.classes.blocks import SectionBlock, DividerBlock, ActionsBlock
+from slack.web.classes.elements import ButtonElement
+
+from slack_entities.entities.action import (
+    action_from_webhook, Action, ButtonAction, SelectAction,
+    MessageAction, DialogSubmissionAction, BlockAction
+)
 
 
 def return_original_message():
@@ -51,7 +56,7 @@ WEBHOOK_TEMPLATE = {
     },
     "action_ts": "1539762867.466414",
     "token": "SLACK_TOKEN",
-    "response_url": 'test_url'
+    "response_url": 'test_url',
 }
 WEBHOOK_SELECT = dict(WEBHOOK_TEMPLATE, **{
     'actions': [{
@@ -87,22 +92,69 @@ WEBHOOK_MESSAGE_ACTION = dict(WEBHOOK_TEMPLATE, **{
     'callback_id': 'pivotal',
     'trigger_id': '472869436786.47444502659.884405da2a25311a4bcae9ddfaf23c07',
     'message': {
-            'text': "some message",
-            'username': 'USERNAME',
-            'user': 'USER_ID',
-            'type': 'message',
-            'ts': '1541507772.003300'
-        },
+        'text': "some message",
+        'username': 'USERNAME',
+        'user': 'USER_ID',
+        'type': 'message',
+        'ts': '1541507772.003300'
+    },
     'response_url': 'test_url'
 })
 WEBHOOK_DIALOG_SUBMISSION_ACTION = dict(WEBHOOK_TEMPLATE, **{
     'type': 'dialog_submission',
     'callback_id': 'pivotal-ticket',
     'submission': {
-            'field_1': 'val 1',
-            'field_2': 'val 2'
-        },
+        'field_1': 'val 1',
+        'field_2': 'val 2'
+    },
     'response_url': 'test_url'
+})
+
+# TODO Add 'block_id' and 'action_id' where needed
+WEBHOOK_BLOCK_ACTION = dict(WEBHOOK_TEMPLATE, **{
+    'type': 'block_actions',
+    "actions": [
+        {
+            'action_id': 'WaXA',
+            'block_id': '=qXel',
+            'value': 'click_me_123',
+            'action_ts': '1548426417.840180'
+        }
+    ],
+    'message': {
+        'text': 'some message',
+        'user': 'USER_ID',
+        'blocks': [
+            {
+                'type': 'section',
+                'text': {
+                    'text': 'Text in section.'
+                },
+                'accessory': {
+                    'type': 'button',
+                    'text': {
+                        'text': 'Button',
+                    },
+                    'value': 'click_me_123'
+                }
+            },
+            {
+                'type': 'divider'
+            },
+            {
+                'type': 'actions',
+                'elements': [
+                    {
+                        'type': 'button',
+                        'text': {
+                            'text': 'Button',
+                        },
+                        'value': 'click_me_123'
+                    }
+                ]
+            }
+        ]
+    },
 })
 
 
@@ -146,9 +198,20 @@ class ActionTestCase(TestCase):
         })
         self.assertTrue(type(action) == DialogSubmissionAction)
 
+    def action_from_webhook_BlockAction(self):
+        action = action_from_webhook(WEBHOOK_BLOCK_ACTION)
+
+        self.assertTrue(type(action.original_message.blocks[0]) == SectionBlock)
+        self.assertTrue(type(action.original_message.blocks[1]) == DividerBlock)
+        self.assertTrue(type(action.original_message.blocks[2]) == ActionsBlock)
+        self.assertTrue(type(action.original_message.blocks[0].accessory) == ButtonElement)
+        self.assertTrue(type(action.original_message.blocks[2].elements[0]) == ButtonElement)
+        self.assertTrue(type(action) == BlockAction)
+
     def test_action_from_webhook(self):
         self.action_from_webhook_ButtonAction()
         self.action_from_webhook_SelectAction()
         self.action_from_webhook_Action()
         self.action_from_webhook_MessageAction()
         self.action_from_webhook_DialogSubmissionAction()
+        self.action_from_webhook_BlockAction()
