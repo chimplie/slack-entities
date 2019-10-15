@@ -1,4 +1,6 @@
 import logging
+from slack.web.classes.blocks import SectionBlock, DividerBlock, ActionsBlock
+from slack.web.classes.elements import ButtonElement
 
 from slack_entities.entities.channel import Channel
 from slack_entities.entities.team import Team
@@ -107,18 +109,6 @@ class BlockAction(BaseAction):
         self.value = value
 
     @classmethod
-    def _get_original_message(cls, webhook):
-        original_message = webhook['message']
-
-        return IncomingMessage(
-            user_id=original_message.get('user') or original_message.get('bot_id'),
-            channel_id=webhook['channel']['id'],
-            text=original_message['text'],
-            attachments=original_message.get('attachments', []),
-            blocks=original_message.get('blocks', []),
-        )
-
-    @classmethod
     def from_item(cls, webhook):
         team_dict = webhook['team']
         channel_dict = webhook['channel']
@@ -130,7 +120,7 @@ class BlockAction(BaseAction):
             'team': Team(id=team_dict['id'], domain=team_dict['domain']),
             'channel': Channel(id=channel_dict['id'], name=channel_dict['name']),
             'user': User(id=user_dict['id'], name=user_dict['name']),
-            'original_message': cls._get_original_message(webhook),
+            'original_message': IncomingMessage.from_item(webhook),
             'response_url': webhook['response_url'],
             'block_id': action['block_id'],
             'action_id': action['action_id'],
