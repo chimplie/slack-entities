@@ -127,7 +127,7 @@ class BlockAction(BaseAction):
             'block_id': action['block_id'],
             'action_id': action['action_id'],
             'value': action['value'],
-            'trigger_id': webhook['trigger_id'],
+            'trigger_id': webhook.get('trigger_id', None),
         })
 
 

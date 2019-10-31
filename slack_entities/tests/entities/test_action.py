@@ -121,6 +121,7 @@ WEBHOOK_BLOCK_ACTION = dict(WEBHOOK_TEMPLATE, **{
             'action_ts': '1548426417.840180'
         }
     ],
+    'trigger_id': 'some trigger id',
     'message': {
         'text': 'some message',
         'user': 'USER_ID',
