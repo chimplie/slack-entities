@@ -100,13 +100,15 @@ class BlockAction(BaseAction):
         response_url: str,
         block_id: str,
         action_id: str,
-        value: str
+        value: str,
+        trigger_id: str,
     ):
         super().__init__(ts=ts, team=team, user=user, channel=channel,
                          original_message=original_message, response_url=response_url)
         self.block_id = block_id
         self.action_id = action_id
         self.value = value
+        self.trigger_id = trigger_id
 
     @classmethod
     def from_item(cls, webhook):
@@ -125,6 +127,7 @@ class BlockAction(BaseAction):
             'block_id': action['block_id'],
             'action_id': action['action_id'],
             'value': action['value'],
+            'trigger_id': webhook['trigger_id'],
         })
 
 
