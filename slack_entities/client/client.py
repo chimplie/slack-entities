@@ -25,7 +25,7 @@ class SlackClientWithLogging(WebClient):
 
         params = {'api_method': api_method}
         # We have to use json instead of data to send blocks.
-        if 'chat' in api_method:
+        if any(word in api_method for word in ('chat', 'dialog')):
             params['json'] = kwargs
         else:
             params['data'] = kwargs
