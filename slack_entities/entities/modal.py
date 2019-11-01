@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from slack_entities.client import get_client
+from slack_entities.client.client import get_client
 from slack.web.classes.blocks import Block
 from slack.web.classes.objects import extract_json
 
