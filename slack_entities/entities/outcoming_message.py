@@ -17,6 +17,7 @@ class OutcomingMessage:
     def send(self):
         return get_client(token=self.token).api_call(
             'chat.postMessage',
+            body_encoding='json',
             channel=self.channel.id,
             text=self.text,
             attachments=self.attachments,
@@ -26,6 +27,7 @@ class OutcomingMessage:
     def send_ephemeral(self, user: User):
         return get_client(token=self.token).api_call(
             'chat.postEphemeral',
+            body_encoding='json',
             channel=self.channel.id,
             text=self.text,
             attachments=self.attachments,
@@ -40,6 +42,7 @@ class OutcomingMessage:
         """
         return get_client(token=self.token).api_call(
             'chat.update',
+            body_encoding='json',
             channel=self.channel.id,
             ts=ts,
             text=self.text,

@@ -1,3 +1,4 @@
+from typing import Optional
 import logging
 import os
 
@@ -20,22 +21,20 @@ class NoSlackTokenError(Exception):
 
 
 class SlackClientWithLogging(WebClient):
-    def api_call(self, api_method, **kwargs):
+    def api_call(self, api_method: str, body_encoding: Optional[str] = 'data', **kwargs):
         logger.info(f"Fetching `{api_method}` with params `{kwargs}`")
 
         params = {'api_method': api_method}
-        # We have to use json instead of data to send blocks.
-        if any(word in api_method for word in ('chat', 'dialog')):
-            params['json'] = kwargs
-        else:
-            params['data'] = kwargs
+        # Some methods require body to be sent as data and some - as json.
+        # We send it as data by default.
+        params[body_encoding] = kwargs
 
         response = super().api_call(**params)
         logger.info(f"Response:\n {response}")
         return response
 
 
-def get_client(token=None):
+def get_client(token: str = None):
     # Trying to get token from environment
     if not token:
         token = os.environ.get("SLACK_TOKEN")

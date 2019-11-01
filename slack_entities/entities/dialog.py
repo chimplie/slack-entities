@@ -13,6 +13,7 @@ class Dialog:
     def send(self):
         return get_client(token=self.token).api_call(
             'dialog.open',
+            body_encoding='json',
             dialog=self.dialog,
             trigger_id=self.trigger_id
         )
