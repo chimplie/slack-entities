@@ -116,7 +116,7 @@ class BlockAction(BaseAction):
         channel_dict = webhook['channel']
         user_dict = webhook['user']
         action = webhook['actions'][0]
-        value = action.get('value', action.get('selected_option').get('value'))
+        value = action.get('value', action.get('selected_option', {}).get('value'))
 
         return cls(**{
             'ts': action['action_ts'],
