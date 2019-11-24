@@ -116,7 +116,14 @@ class BlockAction(BaseAction):
         channel_dict = webhook['channel']
         user_dict = webhook['user']
         action = webhook['actions'][0]
-        value = action.get('value', action.get('selected_option', {}).get('value'))
+
+        action_type = action.get('type', 'button')
+        if action_type == 'datepicker':
+            value = action.get('selected_date')
+        elif action_type = 'static_select':
+            value = action.get('selected_option', {}).get('value')
+        else:
+            value = action.get('value')
 
         return cls(**{
             'ts': action['action_ts'],
