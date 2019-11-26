@@ -86,7 +86,7 @@ class DeletedMessageEvent(MessageEvent):
         )
 
 
-class BotMessageEvent(Event):
+class BotMessageEvent(MessageEvent):
     @classmethod
     def from_item(cls, id, event_item):
         return cls(
