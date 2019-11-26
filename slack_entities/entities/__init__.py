@@ -5,7 +5,7 @@ from .action import (
 from .channel import Channel
 from .dialog import Dialog
 from .event import (
-    Event, event_from_rtm, event_from_webhook,
+    Event, event_from_rtm, event_from_webhook, BotMessageEvent,
     DeletedMessageEvent, EditedMessageEvent, MessageEvent, TeamJoinEvent, UserChangeEvent
 )
 from .incoming_message import IncomingMessage
@@ -19,6 +19,7 @@ __all__ = [
     Action,
     BaseAction,
     BlockAction,
+    BotMessageEvent,
     EditedMessageEvent,
     Event,
     IncomingMessage,
