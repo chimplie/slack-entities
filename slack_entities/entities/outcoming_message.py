@@ -7,7 +7,16 @@ class OutcomingMessage:
     """
     Describes message sent to Slack
     """
-    def __init__(self, channel: Channel, attachments: list=None, text: str='', token: str=None, blocks: list=None):
+    def __init__(
+        self,
+        channel: Channel,
+        attachments: list = None,
+        text: str = '',
+        token: str = None,
+        blocks: list = None,
+        *args,
+        **kwargs,
+    ):
         self.channel = channel
         self.token = token
         self.text = text
@@ -48,4 +57,18 @@ class OutcomingMessage:
             text=self.text,
             attachments=self.attachments,
             blocks=self.blocks,
+        )
+
+    def send_in_thread(self, thread_ts: str):
+        """ Sends threaded message.
+        :param ts: Timestamp of the original parent message which thread belongs to.
+        """
+        return get_client(token=self.token).api_call(
+            'chat.postMessage',
+            body_encoding='json',
+            channel=self.channel.id,
+            text=self.text,
+            attachments=self.attachments,
+            blocks=self.blocks,
+            thread_ts=thread_ts,
         )
