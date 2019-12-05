@@ -9,7 +9,7 @@ def str_to_slack_text_element(attr: Union[str, dict], text_type: Optional[str] =
     if isinstance(attr, str):
         return {
             'type': text_type,
-            'text': self._title,
+            'text': attr,
         }
     return attr
 
