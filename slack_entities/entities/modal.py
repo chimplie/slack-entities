@@ -1,8 +1,17 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from slack_entities.client.client import get_client
 from slack.web.classes.blocks import Block
 from slack.web.classes.objects import extract_json
+
+
+def str_to_slack_text_element(attr: Union[str, dict], text_type: Optional[str] = 'plain_text') -> dict:
+    if isinstance(attr, str):
+        return {
+            'type': text_type,
+            'text': self._title,
+        }
+    return attr
 
 
 class View:
@@ -24,14 +33,18 @@ class View:
         self.token = token
         self.trigger_id = trigger_id
         self.callback_id = callback_id
-        self.title = title
+        self._title = title
         self._blocks = blocks
-        self.close = close
-        self.submit = submit
+        self._close = close
+        self._submit = submit
 
-    @property
-    def blocks(self):
-        return extract_json(self._blocks)
+    def open(self):
+        return get_client(self.token).api_call(
+            'views.open',
+            body_encoding='json',
+            trigger_id=self.trigger_id,
+            view=self.view
+        )
 
     @property
     def view(self):
@@ -44,13 +57,21 @@ class View:
             'callback_id': self.callback_id,
         }
 
-    def open(self):
-        return get_client(self.token).api_call(
-            'views.open',
-            body_encoding='json',
-            trigger_id=self.trigger_id,
-            view=self.view
-        )
+    @property
+    def blocks(self):
+        return extract_json(self._blocks)
+
+    @property
+    def title(self):
+        return str_to_slack_text_element(self._title)
+
+    @property
+    def submit(self):
+        return str_to_slack_text_element(self._submit)
+
+    @property
+    def close(self):
+        return str_to_slack_text_element(self._close)
 
 
 class Modal(View):
