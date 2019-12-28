@@ -16,6 +16,9 @@ class Channel(SlackResource):
     def __repr__(self):
         return f"<Channel #{self.name or self.id}>"
 
+    def __eq__(self, other):
+        return self.id and other.id and self.id == other.id
+
     @property
     def is_public(self):
         return not self.is_private
