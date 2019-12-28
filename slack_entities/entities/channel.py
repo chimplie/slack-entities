@@ -20,7 +20,7 @@ class Channel(SlackResource):
         return self.id and other.id and self.id == other.id
 
     def __hash__(self):
-        return self.id
+        return f'{self.__class__.__name__}-{self.id}'
 
     @property
     def is_public(self):
