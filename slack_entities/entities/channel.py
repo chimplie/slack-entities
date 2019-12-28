@@ -19,6 +19,9 @@ class Channel(SlackResource):
     def __eq__(self, other):
         return self.id and other.id and self.id == other.id
 
+    def __hash__(self):
+        return self.id
+
     @property
     def is_public(self):
         return not self.is_private
