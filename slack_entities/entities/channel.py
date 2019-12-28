@@ -1,3 +1,5 @@
+import hashlib
+
 from .resource import SlackResource
 
 
@@ -20,7 +22,7 @@ class Channel(SlackResource):
         return self.id and other.id and self.id == other.id
 
     def __hash__(self):
-        return f'{self.__class__.__name__}-{self.id}'
+        return int(hashlib.md5(self.id.encode()).hexdigest(), 16)
 
     @property
     def is_public(self):
