@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 from .resource import SlackResource
 
@@ -38,3 +39,19 @@ class Channel(SlackResource):
         """
         channel_id = cls.using(token)._fetch(method='im.open', return_resource='channel', user=user_id)['id']
         return cls(channel_id)
+
+    def recent_messages(self, limit=20):
+        """
+        Returns recent messages in the channel
+        :param limit: Limit of messages to return
+        """
+        messages_history_client = self.using(os.environ['CONVERSATIONS_READ_TOKEN']).client
+        messages_items = messages_history_client.api_call(
+            'conversations.history', channel=self.id, limit=limit)['messages']
+
+        # Hack circular imports
+        from slack_entities.entities import IncomingMessage
+        return [
+            IncomingMessage.from_original_message(message_item, self)
+            for message_item in messages_items
+        ]

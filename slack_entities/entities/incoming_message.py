@@ -35,9 +35,17 @@ class IncomingMessage:
     def from_item(cls, webhook):
         original_message = webhook['message']
 
+        return cls.from_original_message(original_message, channel_id=webhook['channel']['id'])
+
+    @classmethod
+    def from_original_message(cls, original_message, channel=None, channel_id=None):
+        channel_id = channel_id or channel and channel.id
+        if not channel_id:
+            raise ValueError("Neither `channel` nor `channel_id` is specified.")
+
         return cls(
             user_id=original_message.get('user') or original_message.get('bot_id'),
-            channel_id=webhook['channel']['id'],
+            channel_id=channel_id,
             text=original_message['text'],
             attachments=original_message.get('attachments', []),
             blocks=cls._transform_blocksjson_to_classes(original_message.get('blocks', [])),
