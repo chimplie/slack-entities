@@ -12,12 +12,21 @@ class IncomingMessage:
     _user: User = None
     _channel: Channel = None
 
-    def __init__(self, user_id: str, channel_id: str, text: str, attachments: list = [], blocks: list = None):
+    def __init__(
+        self,
+        user_id: str,
+        channel_id: str,
+        text: str,
+        attachments: list = [],
+        blocks: list = None,
+        ts: str = None
+    ):
         self._user_id = user_id
         self._channel_id = channel_id
         self.text = text
         self.attachments = attachments
         self.blocks = blocks
+        self.ts = ts
 
     def user(self, token=None) -> User:
         if not self._user:
@@ -49,6 +58,7 @@ class IncomingMessage:
             text=original_message['text'],
             attachments=original_message.get('attachments', []),
             blocks=cls._transform_blocksjson_to_classes(original_message.get('blocks', [])),
+            ts=original_message.get('ts'),
         )
 
     @classmethod
