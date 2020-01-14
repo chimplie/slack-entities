@@ -27,14 +27,26 @@ class OutcomingMessage:
         self.icon_url = icon_url
         self.username = username
 
+    @property
+    def message_params(self):
+        params = {
+            'body_encoding': 'json',
+            'channel': self.channel.id,
+            'text': self.text,
+            'attachments': self.attachments,
+            'blocks': self.blocks,
+        }
+        if self.icon_url is not None:
+            params['icon_url'] = self.icon_url
+        if self.username is not None:
+            params['username'] = self.username
+
+        return params
+
     def send(self):
         return get_client(token=self.token).api_call(
             'chat.postMessage',
-            body_encoding='json',
-            channel=self.channel.id,
-            text=self.text,
-            attachments=self.attachments,
-            blocks=self.blocks,
+            **self.message_params
         )
 
     def send_ephemeral(self, user: User):
@@ -55,32 +67,16 @@ class OutcomingMessage:
         """
         return get_client(token=self.token).api_call(
             'chat.update',
-            body_encoding='json',
-            channel=self.channel.id,
             ts=ts,
-            text=self.text,
-            attachments=self.attachments,
-            blocks=self.blocks,
+            **self.message_params
         )
 
     def send_in_thread(self, thread_ts: str):
         """ Sends threaded message.
         :param ts: Timestamp of the original parent message which thread belongs to.
         """
-        params = {
-            'body_encoding': 'json',
-            'channel': self.channel.id,
-            'text': self.text,
-            'attachments': self.attachments,
-            'blocks': self.blocks,
-        }
-        if self.icon_url is not None:
-            params['icon_url'] = self.icon_url
-        if self.username is not None:
-            params['username'] = self.username
-
         return get_client(token=self.token).api_call(
             'chat.postMessage',
             thread_ts=thread_ts,
-            **params
+            **self.message_params
         )
