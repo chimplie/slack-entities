@@ -14,6 +14,8 @@ class OutcomingMessage:
         text: str = '',
         token: str = None,
         blocks: list = None,
+        icon_url: str = None,
+        username: str = None,
         *args,
         **kwargs,
     ):
@@ -22,6 +24,8 @@ class OutcomingMessage:
         self.text = text
         self.attachments = attachments if attachments else []
         self.blocks = blocks if blocks else []
+        self.icon_url = icon_url
+        self.username = username
 
     def send(self):
         return get_client(token=self.token).api_call(
@@ -63,12 +67,20 @@ class OutcomingMessage:
         """ Sends threaded message.
         :param ts: Timestamp of the original parent message which thread belongs to.
         """
+        params = {
+            'body_encoding': 'json',
+            'channel': self.channel.id,
+            'text': self.text,
+            'attachments': self.attachments,
+            'blocks': self.blocks,
+        }
+        if self.icon_url is not None:
+            params['icon_url'] = self.icon_url
+        if self.username is not None:
+            params['username'] = self.username
+
         return get_client(token=self.token).api_call(
             'chat.postMessage',
-            body_encoding='json',
-            channel=self.channel.id,
-            text=self.text,
-            attachments=self.attachments,
-            blocks=self.blocks,
             thread_ts=thread_ts,
+            **params
         )
