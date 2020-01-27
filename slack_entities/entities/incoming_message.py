@@ -87,12 +87,17 @@ class IncomingMessage:
 
         # Currently we support only 'button' type for accessory
         if accessory_object.get('type', '') == 'button':
-            result['accessory'] = ButtonElement(
+            button_element = ButtonElement(
                 text=accessory_object.get('text', {}).get('text', ''),
                 # TODO Figure out where we can get 'action_id'
                 action_id=accessory_object.get('action_id', ''),
                 value=accessory_object.get('value', '')
             )
+
+            if accessory_object.get('style'):
+                button_element.style = accessory_object.get('style')
+
+            result['accessory'] = button_element
 
         # Removing keys with empty values
         result = {k: v for k, v in result.items() if v}
