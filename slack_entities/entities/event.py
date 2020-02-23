@@ -35,7 +35,8 @@ class MessageEvent(Event):
             user_id=event_item.get("user") or event_item.get("bot_id"),
             channel_id=event_item["channel"],
             text=event_item["text"],
-            attachments=event_item.get("attachments", list())
+            attachments=event_item.get("attachments", list()),
+            team_id=event_item.get("team"),
         )
 
     @classmethod
@@ -57,13 +58,15 @@ class EditedMessageEvent(MessageEvent):
                 user_id=event_item['message'].get("user") or event_item.get("bot_id"),
                 channel_id=event_item["channel"],
                 text=event_item['message']["text"],
-                attachments=event_item['message'].get("attachments", list())
+                attachments=event_item['message'].get("attachments", list()),
+                team_id=event_item.get("team"),
             ),
             previous_message=IncomingMessage(
                 user_id=event_item['previous_message'].get("user") or event_item.get("bot_id"),
                 channel_id=event_item["channel"],
                 text=event_item['previous_message']["text"],
-                attachments=event_item['previous_message'].get("attachments", list())
+                attachments=event_item['previous_message'].get("attachments", list()),
+                team_id=event_item.get("team"),
             )
         )
 
@@ -81,7 +84,8 @@ class DeletedMessageEvent(MessageEvent):
                 user_id=event_item['previous_message'].get("user") or event_item.get("bot_id"),
                 channel_id=event_item["channel"],
                 text=event_item['previous_message']["text"],
-                attachments=event_item['previous_message'].get("attachments", list())
+                attachments=event_item['previous_message'].get("attachments", list()),
+                team_id=event_item.get("team"),
             )
         )
 
@@ -96,6 +100,7 @@ class BotMessageEvent(MessageEvent):
                 user_id=event_item.get("bot_id"),
                 channel_id=event_item["channel"],
                 text=event_item["text"],
+                team_id=event_item.get("team"),
             )
         )
 

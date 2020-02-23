@@ -1,6 +1,7 @@
 from slack.web.classes.blocks import SectionBlock, DividerBlock, ActionsBlock
 from slack.web.classes.elements import ButtonElement
 
+from .team import Team
 from .channel import Channel
 from .user import User
 
@@ -11,11 +12,13 @@ class IncomingMessage:
     """
     _user: User = None
     _channel: Channel = None
+    _team: Team = None
 
     def __init__(
         self,
         user_id: str,
         channel_id: str,
+        team_id: str,
         text: str,
         attachments: list = [],
         blocks: list = None,
@@ -23,6 +26,7 @@ class IncomingMessage:
     ):
         self._user_id = user_id
         self._channel_id = channel_id
+        self._team_id = team_id
         self.text = text
         self.attachments = attachments
         self.blocks = blocks
@@ -39,6 +43,12 @@ class IncomingMessage:
             self._channel = Channel.using(token).get(id=self._channel_id)
 
         return self._channel
+
+    def team(self) -> Team:
+        if not self._team:
+            self._team = Team(id=self._team_id)
+
+        return self._team
 
     @classmethod
     def from_item(cls, webhook):
@@ -59,6 +69,7 @@ class IncomingMessage:
             attachments=original_message.get('attachments', []),
             blocks=cls._transform_blocksjson_to_classes(original_message.get('blocks', [])),
             ts=original_message.get('ts'),
+            team_id=original_message.get("team"),
         )
 
     @classmethod

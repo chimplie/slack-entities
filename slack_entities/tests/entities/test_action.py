@@ -16,6 +16,7 @@ def return_original_message():
         "text": "some text :)",
         "username": "BOT_USERNAME",
         "bot_id": "BOT_ID",
+        "team": "TEAM_ID",
         "attachments": [{
             "callback_id": "first_callback",
             "fallback": "Try again later :(",

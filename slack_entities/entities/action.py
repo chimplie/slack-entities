@@ -68,7 +68,8 @@ class Action(BaseAction):
             user_id=original_message.get('user') or original_message.get('bot_id'),
             channel_id=webhook['channel']['id'],
             text=original_message['text'],
-            attachments=original_message.get('attachments', list())
+            attachments=original_message.get('attachments', list()),
+            team_id=original_message.get('team')
         )
 
     @classmethod
@@ -272,7 +273,8 @@ class MessageAction(Action):
             user_id=message.get('user') or message.get('bot_id'),
             channel_id=webhook['channel']['id'],
             text=message['text'],
-            attachments=message.get('attachments', list())
+            attachments=message.get('attachments', list()),
+            team_id=message.get('team')
         )
 
 

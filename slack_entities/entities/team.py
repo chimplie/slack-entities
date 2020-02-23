@@ -47,6 +47,10 @@ class Team(SlackResource):
         return cls.from_item(cls._fetch(**kwargs))
 
     @classmethod
+    def by_token(cls, token):
+        return cls.using(token=token).get()
+
+    @classmethod
     def filter(cls, **kwargs):
         """
         We can't use filter
