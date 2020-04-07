@@ -145,6 +145,10 @@ class EventFactory:
         if event.get('subtype') == 'bot_message' and event.get('type') == 'message':
             return BotMessageEvent
 
+        # For new apps slack sends different message structure for bot users.
+        if event.get('bot_id') is not None and event.get('type') == 'message':
+            return BotMessageEvent
+
         if event.get('type') == 'message':
             return MessageEvent
 
