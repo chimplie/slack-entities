@@ -5,7 +5,7 @@ import os
 from slack import WebClient
 
 
-LOGGER_LEVEL = os.environ.get('LOGGER_LEVEL', 15)
+LOGGER_LEVEL = int(os.environ.get('LOGGER_LEVEL', 15))
 logger = logging.Logger("slack_client", level=LOGGER_LEVEL)
 logger.setLevel(LOGGER_LEVEL)
 
