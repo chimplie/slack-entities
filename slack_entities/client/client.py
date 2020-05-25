@@ -7,7 +7,7 @@ from slack import WebClient
 
 SLACK_ENTITIES_LOGGER_LEVEL = int(os.environ.get('SLACK_ENTITIES_LOGGER_LEVEL', 15))
 logger = logging.Logger("slack_client", level=SLACK_ENTITIES_LOGGER_LEVEL)
-logger.setLevel(LOGGER_LEVEL)
+logger.setLevel(SLACK_ENTITIES_LOGGER_LEVEL)
 
 
 class SlackApiError(Exception):
