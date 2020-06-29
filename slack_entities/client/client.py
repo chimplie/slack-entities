@@ -32,7 +32,7 @@ class SlackClientWithLogging(WebClient):
         params[body_encoding] = kwargs
 
         response = super().api_call(**params)
-        logger.info(f"Response:\n {response}")
+        logger.info(f"Response: {response.status_code}.")
         return response
 
 
