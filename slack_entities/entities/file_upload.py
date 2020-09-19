@@ -36,5 +36,6 @@ class FileUpload:
     def send(self):
         return get_client(token=self.token).api_call(
             'files.upload',
+            body_encoding='json',
             **self.message_params
         )
