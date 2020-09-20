@@ -23,13 +23,14 @@ class NoSlackTokenError(Exception):
 
 
 class SlackClientWithLogging(WebClient):
-    def api_call(self, api_method: str, body_encoding: Optional[str] = 'data', **kwargs):
+    def api_call(self, api_method: str, files: Optional[dict] = None, body_encoding: Optional[str] = 'data', **kwargs):
         logger.info(f"Fetching `{api_method}` with params `{kwargs}`")
 
         params = {'api_method': api_method}
         # Some methods require body to be sent as data and some - as json.
         # We send it as data by default.
         params[body_encoding] = kwargs
+        params['files'] = files
 
         response = super().api_call(**params)
         logger.info(f"Response: {response.status_code}.")

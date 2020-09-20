@@ -8,6 +8,7 @@ from .event import (
     Event, event_from_rtm, event_from_webhook, BotMessageEvent,
     DeletedMessageEvent, EditedMessageEvent, MessageEvent, TeamJoinEvent, UserChangeEvent
 )
+from .file_upload import FileUpload
 from .incoming_message import IncomingMessage
 from .modal import Modal
 from .outcoming_message import OutcomingMessage
@@ -22,6 +23,7 @@ __all__ = [
     BotMessageEvent,
     EditedMessageEvent,
     Event,
+    FileUpload,
     IncomingMessage,
     MessageAction,
     MessageEvent,

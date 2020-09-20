@@ -9,23 +9,22 @@ class FileUpload:
             self,
             channels: List[Channel],
             token: str,
-            content: bytes,
-            filetype: str = None,
-            filename: str = None,
-            initial_comment: str = None,
+            file_path: str,
+            filetype: str,
+            filename: str,
+            initial_comment: str,
     ):
         self.channels = channels
         self.token = token
-        self.content = content
         self.filename = filename
         self.filetype = filetype
         self.initial_comment = initial_comment
+        self.file_path = file_path
 
     @property
     def message_params(self):
         params = {
             'channels': ','.join(map(lambda c: c.id, self.channels)),
-            'content': self.content,
             'filename': self.filename,
             'filetype': self.filetype,
             'initial_comment': self.initial_comment
@@ -36,6 +35,7 @@ class FileUpload:
     def send(self):
         return get_client(token=self.token).api_call(
             'files.upload',
-            body_encoding='json',
-            **self.message_params
+            body_encoding='data',
+            files={'file': self.file_path},
+            **self.message_params,
         )
