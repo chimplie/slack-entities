@@ -121,11 +121,14 @@ class IncomingMessage:
         for element in block.get('elements', []):
             # Currently we support only 'button' type for element
             if element.get('type') == 'button':
-                result.append(ButtonElement(
+                button = ButtonElement(
                     text=element.get('text', {}).get('text', ''),
                     # TODO Figure out where we can get 'action_id'
                     action_id=element.get('action_id', ''),
-                    value=element.get('value', '')
-                ))
+                    value=element.get('value', ''),
+                )
+                if element.get('style'):
+                    button.style = element.get('style')
+                result.append(button)
 
         return ActionsBlock(elements=result, block_id=block.get('block_id')) if result else None
