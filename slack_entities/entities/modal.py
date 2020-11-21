@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 from slack_entities.client.client import get_client
 from slack.web.classes.blocks import Block
-from slack.web.classes.objects import extract_json
+from slack.web.classes import extract_json
 
 
 def str_to_slack_text_element(attr: Union[str, dict], text_type: Optional[str] = 'plain_text') -> dict:
