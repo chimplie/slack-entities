@@ -330,6 +330,46 @@ class DialogSubmissionAction(Action):
         })
 
 
+class ViewClosedAction:
+    """Represents action on modal closing"""
+    def __init__(
+            self,
+            callback_id,
+            team: Team,
+            user: User,
+            view: View,
+    ):
+        self.callback_id = callback_id
+        self.team = team
+        self.user = user
+        self.view = view
+
+    @classmethod
+    def from_item(cls, webhook):
+        team_dict = webhook['team']
+        user_dict = webhook['user']
+        view = View(**webhook['view'])
+        return cls(**{
+            'callback_id': view.callback_id,
+            'team': Team(id=team_dict['id'], domain=team_dict['domain']),
+            'user': User(id=user_dict['id'], name=user_dict['name']),
+            'view': view,
+        })
+
+
+class ViewSubmissionAction(ViewClosedAction):
+    """Represents modal submit action"""
+
+
+class ViewCancelAction(ViewClosedAction):
+    """Represents modal cancel action"""
+    @classmethod
+    def from_item(cls, webhook):
+        action = super().from_item(webhook)
+        action.is_cleared = webhook['is_cleared']
+        return action
+
+
 def get_class_for_interactive_message(action_type):
     """
     Returns one of classes which handle actions with type 'interactive_message'
@@ -360,6 +400,12 @@ def get_action_from_webhook(webhook):
 
     if _type == 'dialog_submission':
         return DialogSubmissionAction.from_item(webhook)
+
+    if _type == 'view_submission':
+        return ViewSubmissionAction.from_item(webhook)
+
+    if _type == 'view_closed':
+        return ViewCancelAction.from_item(webhook)
 
 
 def action_from_webhook(webhook):
