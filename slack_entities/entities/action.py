@@ -1,6 +1,5 @@
 import logging
-from slack.web.classes.blocks import SectionBlock, DividerBlock, ActionsBlock
-from slack.web.classes.elements import ButtonElement
+from slack.web.classes.views import View
 
 from slack_entities.entities.channel import Channel
 from slack_entities.entities.team import Team
@@ -89,23 +88,21 @@ class Action(BaseAction):
         })
 
 
-class BlockAction(BaseAction):
+class BlockAction:
     """ Represents actions retrieved from blocks. """
     def __init__(
         self,
         ts,
         team: Team,
         user: User,
-        channel: Channel,
-        original_message: IncomingMessage,
-        response_url: str,
         block_id: str,
         action_id: str,
         value: str,
         trigger_id: str,
     ):
-        super().__init__(ts=ts, team=team, user=user, channel=channel,
-                         original_message=original_message, response_url=response_url)
+        self.ts = ts
+        self.team = team
+        self.user = user
         self.block_id = block_id
         self.action_id = action_id
         self.value = value
@@ -114,7 +111,6 @@ class BlockAction(BaseAction):
     @classmethod
     def from_item(cls, webhook):
         team_dict = webhook['team']
-        channel_dict = webhook['channel']
         user_dict = webhook['user']
         action = webhook['actions'][0]
 
@@ -129,15 +125,37 @@ class BlockAction(BaseAction):
         return cls(**{
             'ts': action['action_ts'],
             'team': Team(id=team_dict['id'], domain=team_dict['domain']),
-            'channel': Channel(id=channel_dict['id'], name=channel_dict['name']),
             'user': User(id=user_dict['id'], name=user_dict['name']),
-            'original_message': IncomingMessage.from_item(webhook),
-            'response_url': webhook['response_url'],
             'block_id': action['block_id'],
             'action_id': action['action_id'],
             'value': value,
             'trigger_id': webhook.get('trigger_id', None),
         })
+
+
+class ViewBlockAction(BlockAction):
+    """ Represents actions retrieved from blocks in veiw. """
+    view = None
+    @classmethod
+    def from_item(cls, webhook):
+        block_action = super().from_item(webhook)
+        block_action.view = View(**webhook['view'])
+        return block_action
+
+
+class MessageBlockAction(BlockAction):
+    """ Represents actions retrieved from blocks in message. """
+    channel = None
+    original_message = None
+    response_url = None
+    @classmethod
+    def from_item(cls, webhook):
+        block_action = super().from_item(webhook)
+        channel_dict = webhook.get('channel')
+        block_action.channel = Channel(id=channel_dict['id'], name=channel_dict['name'])
+        block_action.original_message = IncomingMessage.from_item(webhook)
+        block_action.response_url = webhook['response_url']
+        return block_action
 
 
 class SelectAction(Action):
@@ -327,8 +345,11 @@ def get_class_for_interactive_message(action_type):
 
 def get_action_from_webhook(webhook):
     _type = webhook['type']
-
     if _type == 'block_actions':
+        if 'message' in webhook:
+            return MessageBlockAction.from_item(webhook)
+        if 'view' in webhook:
+            return ViewBlockAction.from_item(webhook)
         return BlockAction.from_item(webhook)
 
     if _type == 'interactive_message':
