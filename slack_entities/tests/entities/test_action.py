@@ -7,7 +7,8 @@ from slack.web.classes.elements import ButtonElement
 
 from slack_entities.entities.action import (
     action_from_webhook, Action, ButtonAction, SelectAction,
-    MessageAction, DialogSubmissionAction, BlockAction
+    MessageAction, DialogSubmissionAction, BlockAction,
+    ViewSubmissionAction, ViewCancelAction,
 )
 
 
@@ -39,6 +40,7 @@ def return_original_message():
         "subtype": "bot_message"
     }
 
+
 VIEW_WEBHOOK_TEMPLATE = {
     "team": {
         "id": "TEAM_ID",
@@ -48,11 +50,11 @@ VIEW_WEBHOOK_TEMPLATE = {
         "id": "USER_ID",
         "name": "USER_NAME"
     },
-    "view":{
-      "id":"V0PKB1ZFV",
-      "team_id":"TEAM_ID",
-      "type":"modal",
-      "blocks": [
+    "view": {
+        "id": "V0PKB1ZFV",
+        "team_id": "TEAM_ID",
+        "type": "modal",
+        "blocks": [
             {
                 "type": "section",
                 "text": {
@@ -85,7 +87,23 @@ VIEW_WEBHOOK_TEMPLATE = {
                 ]
             }
         ],
-    }
+        "private_metadata": "",
+        "callback_id": "123",
+        "state": {
+            "values": {}
+        },
+        "hash": "1571318366.2468e46f",
+        "clear_on_close": False,
+        "notify_on_close": False,
+        "close": None,
+        "submit": None,
+        "previous_view_id": None,
+        "root_view_id": "V0PKB1ZFV",
+        "app_id": "AABA1ABCD",
+        "external_id": "",
+        "app_installed_team_id": "T9TK3CUKW",
+        "bot_id": "B0B00B00"
+    },
 }
 
 MESSAGE_WEBHOOK_TEMPLATE = {
@@ -157,6 +175,15 @@ WEBHOOK_DIALOG_SUBMISSION_ACTION = dict(MESSAGE_WEBHOOK_TEMPLATE, **{
         'field_2': 'val 2'
     },
     'response_url': 'test_url'
+})
+
+WEBHOOK_MODAL_SUBMISSION_ACTION = dict(VIEW_WEBHOOK_TEMPLATE, **{
+    'type': 'view_submission',
+})
+
+WEBHOOK_MODAL_CANCEL_ACTION = dict(VIEW_WEBHOOK_TEMPLATE, **{
+    'type': 'view_closed',
+    'is_cleared': False,
 })
 
 # TODO Add 'block_id' and 'action_id' where needed
@@ -270,7 +297,7 @@ class ActionTestCase(TestCase):
         self.assertTrue(type(action.original_message.blocks[1]) == DividerBlock)
         self.assertTrue(type(action.original_message.blocks[2]) == ActionsBlock)
         self.assertTrue(type(action.original_message.blocks[0].accessory) == ButtonElement)
-        # TODO: Now in slackclient 2.9.3 ActionsBlock elements are not parsed
+        # TODO: Now in slackclient 2.9.3 ActionsBlock elements are not parsed, but it will be fixed in 2.9.4
         # self.assertTrue(type(action.original_message.blocks[2].elements[0]) == ButtonElement)
         self.assertTrue(isinstance(action, BlockAction))
 
@@ -281,9 +308,19 @@ class ActionTestCase(TestCase):
         self.assertTrue(type(action.view.blocks[1]) == DividerBlock)
         self.assertTrue(type(action.view.blocks[2]) == ActionsBlock)
         self.assertTrue(type(action.view.blocks[0].accessory) == ButtonElement)
-        # TODO: Now in slackclient 2.9.3 ActionsBlock elements are not parsed
-        #self.assertTrue(type(action.view.blocks[2].elements[0]) == ButtonElement)
+        # TODO: Now in slackclient 2.9.3 ActionsBlock elements are not parsed, but it will be fixed in 2.9.4
+        # self.assertTrue(type(action.view.blocks[2].elements[0]) == ButtonElement)
         self.assertTrue(isinstance(action, BlockAction))
+
+    def action_from_webhook_ModalSubmissionAction(self):
+        action = action_from_webhook(WEBHOOK_MODAL_SUBMISSION_ACTION)
+        self.assertTrue(action.callback_id == VIEW_WEBHOOK_TEMPLATE['view']['callback_id'])
+        self.assertTrue(isinstance(action, ViewSubmissionAction))
+
+    def action_from_webhook_ModalCancelAction(self):
+        action = action_from_webhook(WEBHOOK_MODAL_CANCEL_ACTION)
+        self.assertTrue(action.callback_id == VIEW_WEBHOOK_TEMPLATE['view']['callback_id'])
+        self.assertTrue(isinstance(action, ViewCancelAction))
 
     def test_action_from_webhook(self):
         self.action_from_webhook_ButtonAction()
@@ -293,3 +330,5 @@ class ActionTestCase(TestCase):
         self.action_from_webhook_DialogSubmissionAction()
         self.action_from_webhook_MessageBlockAction()
         self.action_from_webhook_ViewBlockAction()
+        self.action_from_webhook_ModalSubmissionAction()
+        self.action_from_webhook_ModalCancelAction()
