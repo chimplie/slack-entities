@@ -1,5 +1,5 @@
-from slack.web.classes.blocks import SectionBlock, DividerBlock, ActionsBlock
-from slack.web.classes.elements import ButtonElement
+from typing import Optional
+from slack.web.classes.blocks import Block
 
 from .team import Team
 from .channel import Channel
@@ -20,15 +20,15 @@ class IncomingMessage:
         channel_id: str,
         team_id: str,
         text: str,
-        attachments: list = [],
         blocks: list = None,
-        ts: str = None
+        ts: str = None,
+        attachments: Optional[list] = None,
     ):
         self._user_id = user_id
         self._channel_id = channel_id
         self._team_id = team_id
         self.text = text
-        self.attachments = attachments
+        self.attachments = attachments if attachments else []
         self.blocks = blocks
         self.ts = ts
 
@@ -67,68 +67,7 @@ class IncomingMessage:
             channel_id=channel_id,
             text=original_message['text'],
             attachments=original_message.get('attachments', []),
-            blocks=cls._transform_blocksjson_to_classes(original_message.get('blocks', [])),
+            blocks=Block.parse_all(original_message.get('blocks', [])),
             ts=original_message.get('ts'),
             team_id=original_message.get("team"),
         )
-
-    @classmethod
-    def _transform_blocksjson_to_classes(cls, blocks: list) -> list:
-        result = []
-
-        for block in blocks:
-            if block['type'] == 'divider':
-                result.append(DividerBlock())
-            elif block['type'] == 'section':
-                result.append(cls._get_section_object(block))
-            elif block['type'] == 'actions':
-                result.append(cls._get_actions_block(block))
-
-        return result
-
-    @classmethod
-    def _get_section_object(cls, block: dict) -> SectionBlock:
-        result = {
-            'text': block.get('text', {}).get('text', ''),
-            # TODO Figure out where we can get 'block_id'
-            'block_id': block.get('block_id'),
-        }
-
-        accessory_object = block.get('accessory', {})
-
-        # Currently we support only 'button' type for accessory
-        if accessory_object.get('type', '') == 'button':
-            button_element = ButtonElement(
-                text=accessory_object.get('text', {}).get('text', ''),
-                # TODO Figure out where we can get 'action_id'
-                action_id=accessory_object.get('action_id', ''),
-                value=accessory_object.get('value', '')
-            )
-
-            if accessory_object.get('style'):
-                button_element.style = accessory_object.get('style')
-
-            result['accessory'] = button_element
-
-        # Removing keys with empty values
-        result = {k: v for k, v in result.items() if v}
-        return SectionBlock(**result) if result else None
-
-    @classmethod
-    def _get_actions_block(cls, block: dict) -> ActionsBlock:
-        result = []
-
-        for element in block.get('elements', []):
-            # Currently we support only 'button' type for element
-            if element.get('type') == 'button':
-                button = ButtonElement(
-                    text=element.get('text', {}).get('text', ''),
-                    # TODO Figure out where we can get 'action_id'
-                    action_id=element.get('action_id', ''),
-                    value=element.get('value', ''),
-                )
-                if element.get('style'):
-                    button.style = element.get('style')
-                result.append(button)
-
-        return ActionsBlock(elements=result, block_id=block.get('block_id')) if result else None

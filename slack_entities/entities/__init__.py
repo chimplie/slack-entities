@@ -1,6 +1,7 @@
 from .action import (
     Action, action_from_webhook, BaseAction, BlockAction,
-    ButtonAction, DialogSubmissionAction, MessageAction, SelectAction
+    ButtonAction, DialogSubmissionAction, MessageAction, MessageBlockAction,
+    SelectAction, ViewBlockAction, ViewClosedAction, ViewSubmissionAction, ViewCancelAction
 )
 from .channel import Channel
 from .dialog import Dialog
@@ -17,24 +18,29 @@ from .user import User
 
 
 __all__ = [
-    Action,
-    BaseAction,
-    BlockAction,
-    BotMessageEvent,
-    EditedMessageEvent,
-    Event,
-    FileUpload,
-    IncomingMessage,
-    MessageAction,
-    MessageEvent,
-    Modal,
-    OutcomingMessage,
-    SelectAction,
-    Team,
-    TeamJoinEvent,
-    User,
-    UserChangeEvent,
-    action_from_webhook,
-    event_from_rtm,
-    event_from_webhook
+    'Action',
+    'BaseAction',
+    'BlockAction',
+    'BotMessageEvent',
+    'EditedMessageEvent',
+    'Event',
+    'FileUpload',
+    'IncomingMessage',
+    'MessageAction',
+    'MessageBlockAction',
+    'MessageEvent',
+    'Modal',
+    'OutcomingMessage',
+    'SelectAction',
+    'Team',
+    'TeamJoinEvent',
+    'User',
+    'UserChangeEvent',
+    'ViewBlockAction',
+    'ViewClosedAction',
+    'ViewCancelAction',
+    'ViewSubmissionAction',
+    'action_from_webhook',
+    'event_from_rtm',
+    'event_from_webhook'
 ]
