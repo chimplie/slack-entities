@@ -134,8 +134,9 @@ class BlockAction:
 
 
 class ViewBlockAction(BlockAction):
-    """ Represents actions retrieved from blocks in veiw. """
+    """ Represents actions retrieved from blocks in view. """
     view = None
+
     @classmethod
     def from_item(cls, webhook):
         block_action = super().from_item(webhook)
@@ -148,6 +149,7 @@ class MessageBlockAction(BlockAction):
     channel = None
     original_message = None
     response_url = None
+
     @classmethod
     def from_item(cls, webhook):
         block_action = super().from_item(webhook)
@@ -359,6 +361,7 @@ class ViewClosedAction:
 
 class ViewSubmissionAction(ViewClosedAction):
     """Represents modal submit action"""
+    pass
 
 
 class ViewCancelAction(ViewClosedAction):

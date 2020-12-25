@@ -1,3 +1,4 @@
+from typing import Optional
 from slack.web.classes.blocks import Block
 
 from .team import Team
@@ -19,9 +20,9 @@ class IncomingMessage:
         channel_id: str,
         team_id: str,
         text: str,
-        attachments: list = None,
         blocks: list = None,
-        ts: str = None
+        ts: str = None,
+        attachments: Optional[list] = None,
     ):
         self._user_id = user_id
         self._channel_id = channel_id
