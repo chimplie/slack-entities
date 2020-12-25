@@ -89,11 +89,11 @@ class SlackResource:
             return resources[0]
 
     @classmethod
-    def all(cls):
+    def all(cls, **kwargs):
         """
         Returns all available objects from Slack API
         """
-        items = cls._fetch_all()
+        items = cls._fetch_all(**kwargs)
         all = []
 
         for item in items:
